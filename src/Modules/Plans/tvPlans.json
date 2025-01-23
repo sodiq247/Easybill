@@ -1,0 +1,227 @@
+{
+  "GOTV":[
+    {
+    "id":"2",
+    "type":"GOTV",
+    "title":"GOtv Max  ₦5700",
+    "amount": "5700"
+    },
+    {
+    "id":"16",
+    "type":"GOTV",
+    "title":"GOtv Jinja  ₦2250",
+    "amount": "2250"
+    },
+    {
+    "id":"17",
+    "type":"GOTV",
+    "title":"GOtv Smallie-monthly  ₦1100",
+    "amount": "1100"
+    },
+    {
+      "id":"35",
+      "type":"GOTV",
+      "title":"GOtv Smallie - Quarterly  ₦2900",
+      "amount": "2900"
+      },
+      {
+        "id":"36",
+        "type":"GOTV",
+        "title":"GOtv Smallie - Yearly  ₦8600",
+        "amount": "8600"
+        },
+        {
+          "id":"37",
+          "type":"GOTV",
+          "title":"Gotv-jolli  ₦3300000",
+          "amount": "3300000"
+          },
+          {
+            "id":"58",
+            "type":"GOTV",
+            "title":"Gotv-supa monthly ₦6400",
+            "amount": "6400"
+            },
+            {
+              "id":"55",
+              "type":"GOTV",
+              "title":"gotv-supa plus monthly ₦10500",
+              "amount": "10500"
+              }
+  ],
+  "DSTV":[
+    {
+    "id":"6",
+    "type":"DSTV",
+    "title":"DStv Yanga ₦3500.0",
+    "amount": "122.5"
+    },
+    {
+      "id":"7",
+      "type":"DSTV",
+      "title":"DStv Compact ₦10500.0",
+      "amount": "122.5"
+      },
+      {
+        "id":"8",
+        "type":"DSTV",
+        "title":"DStv Compact Plus ₦16600.0",
+        "amount": "122.5"
+        },
+    {
+    "id":"9",
+    "type":"DSTV",
+    "title":"DStv Premium ₦24500.0",
+    "amount": "122.5"
+    },
+    {
+    "id":"22",
+    "type":"DSTV",
+    "title":"DSTV CONFAM ₦6200.0",
+    "amount": "122.5"
+    },
+    {
+      "id":"23",
+      "type":"DSTV",
+      "title":"DStv Asia French ₦39000.0",
+      "amount": "122.5"
+      },
+      {
+        "id":"33",
+        "type":"DSTV",
+        "title":"DStv Padi ₦2500.0",
+        "amount": "122.5"
+        },
+    {
+      "id":"34",
+      "type":"DSTV",
+      "title":"DStv premium extra view  ₦24500.0",
+      "amount": "122.5"
+      },
+      {
+        "id":"56",
+        "type":"DSTV",
+        "title":"200.0MB DSTV  ₦125.0",
+        "amount": "122.5"
+        },
+        {
+          "id":"29",
+          "type":"DSTV",
+          "title":"200.0MB DSTV  ₦125.0",
+          "amount": "122.5"
+          },
+          {
+            "id":"52",
+            "type":"DSTV",
+            "title":"200.0MB DSTV AIR ₦125.0",
+            "amount": "122.5"
+            },
+            {
+              "id":"52",
+              "type":"DSTV",
+              "title":"200.0MB DSTV AIR ₦125.0",
+              "amount": "122.5"
+              },
+              {
+                "id":"52",
+                "type":"DSTV",
+                "title":"200.0MB DSTV AIR ₦125.0",
+                "amount": "122.5"
+                },
+                {
+                  "id":"52",
+                  "type":"DSTV",
+                  "title":"200.0MB DSTV 9MOB ₦125.0",
+                  "amount": "122.5"
+                  },
+                  {
+                    "id":"52",
+                    "type":"DSTV",
+                    "title":"200.0MB DSTV 9MOB ₦125.0",
+                    "amount": "122.5"
+                    },
+                    {
+                      "id":"52",
+                      "type":"DSTV",
+                      "title":"200.0MB DSTV 9MOB ₦125.0",
+                      "amount": "122.5"
+                      }
+  ],
+  "STARTIME":[
+    {
+    "id":"51",
+    "type":"STARTIME",
+    "title":"500.0M ₦125.0 30",
+    "amount": "122.5"
+    },
+    {
+    "id":"52",
+    "type":"STARTIME",
+    "title":"200.0M ₦125.0 30",
+    "amount": "122.5"
+    },
+    {
+    "id":"53",
+    "type":"STARTIME",
+    "title":"300.0M ₦125.0 30",
+    "amount": "122.5"
+    },
+    {
+      "id":"52",
+      "type":"STARTIME",
+      "title":"200.0M ₦125.0 30",
+      "amount": "122.5"
+      },
+      {
+        "id":"52",
+        "type":"STARTIME",
+        "title":"200.0M ₦125.0 30",
+        "amount": "122.5"
+        },
+        {
+          "id":"52",
+          "type":"STARTIME",
+          "title":"200.0M ₦125.0 30",
+          "amount": "122.5"
+          },
+          {
+            "id":"52",
+            "type":"STARTIME",
+            "title":"200.0MB S ₦125.0 30",
+            "amount": "122.5"
+            },
+            {
+              "id":"52",
+              "type":"STARTIME",
+              "title":"200.0MB S ₦125.0 30",
+              "amount": "122.5"
+              },
+              {
+                "id":"52",
+                "type":"STARTIME",
+                "title":"200.0MB S ₦125.0 30",
+                "amount": "122.5"
+                },
+                {
+                  "id":"52",
+                  "type":"STARTIME",
+                  "title":"200.0MB ST ₦125.0 30",
+                  "amount": "122.5"
+                  },
+                  {
+                    "id":"52",
+                    "type":"STARTIME",
+                    "title":"200.0MB ST ₦125.0 30",
+                    "amount": "122.5"
+                    },
+                    {
+                      "id":"52",
+                      "type":"STARTIME",
+                      "title":"200.0MB ST ₦125.0 30",
+                      "amount": "122.5"
+                      }
+  ]
+ 
+      
+  }
+
