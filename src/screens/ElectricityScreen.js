@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import {
   View,
   Text,
@@ -10,11 +10,10 @@ import {
   Modal,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native"; // Import for navigation
 import CustomButton from "../components/CustomButton";
-import { useNavigation } from '@react-navigation/native'; // Import for navigation
-
 import vasServices from "../services/vasServices";
-import { useWallet } from "../components/Wallet";
 
 const ElectricityScreen = () => {
   const [selectedDisco, setSelectedDisco] = useState("");
@@ -25,12 +24,25 @@ const ElectricityScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState({});
   const [amountToPay, setAmountToPay] = useState(0);
-  // Access wallet state from WalletContext
-  const { state } = useWallet();
-  const { balance, name, lastname } = state;
-
-  // Navigation hook
+  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
   const navigation = useNavigation();
+
+
+  // Fetch wallet details from AsyncStorage
+  useEffect(() => {
+    const fetchWalletDetails = async () => {
+      try {
+        const storedWallet = await AsyncStorage.getItem("walletDetails");
+        if (storedWallet) {
+          setWallet(JSON.parse(storedWallet));
+        }
+      } catch (error) {
+        console.error("Error fetching wallet details:", error);
+      }
+    };
+
+    fetchWalletDetails();
+  }, []);
 
   const validateMeter = async () => {
     if (!selectedDisco || !meterNumber || !meterType || !amount) {
@@ -70,7 +82,7 @@ const ElectricityScreen = () => {
   const handlePurchase = async () => {
     setLoading(true);
 
-    if (balance < amountToPay) {
+    if (wallet.balance < amountToPay) {
       Alert.alert("Error", "Insufficient balance.");
       setLoading(false);
       return;
@@ -84,7 +96,7 @@ const ElectricityScreen = () => {
         navigation.goBack();
         setShowModal(false);
       } else {
-        Alert.alert("Error","Transaction unsuccessful");
+        Alert.alert("Error", "Transaction unsuccessful");
         navigation.goBack();
         setShowModal(false);
       }
@@ -101,24 +113,42 @@ const ElectricityScreen = () => {
       <Text className="text-[20px] font-bold text-center mb-4">
         Buy Electricity
       </Text>
-      <Text className="text-lg text-center mb-4">Balance: ₦{balance}</Text>
-      
+      {/* Display Wallet Info */}
+      <Text className="text-lg text-center mb-4">
+        Balance: ₦{wallet.balance}
+      </Text>
+      <Text className="text-lg text-center mb-4">
+        Welcome, {wallet.name} {wallet.lastname}
+      </Text>
+
+      {/* Navigation Buttons */}
       <View className="flex-row gap-1 pr-2 my-2">
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"  onPress={ ()=> navigation.navigate("Home")}>
-        <Text className="text-white text-center">Home</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500" onPress={ ()=> navigation.navigate("Data")}>
-        <Text className="text-white text-center">Data</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"  onPress={ ()=> navigation.navigate("Airtime")}>
-        <Text className="text-white text-center">Airtime</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500" onPress={ ()=> navigation.navigate("CableTv")}>
-        <Text className="text-white text-center">CableTv</Text>
-      </TouchableOpacity>
-       </View>
+        <TouchableOpacity
+          className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"
+          onPress={() => navigation.navigate("Home")}
+        >
+          <Text className="text-white text-center">Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"
+          onPress={() => navigation.navigate("Data")}
+        >
+          <Text className="text-white text-center">Data</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"
+          onPress={() => navigation.navigate("Airtime")}
+        >
+          <Text className="text-white text-center">Airtime</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"
+          onPress={() => navigation.navigate("CableTv")}
+        >
+          <Text className="text-white text-center">CableTv</Text>
+        </TouchableOpacity>
+      </View>
       <View className="p-4 mb-4 border rounded-lg border-gray-300 bg-white">
-       
         <Picker
           selectedValue={selectedDisco}
           onValueChange={(itemValue) => setSelectedDisco(itemValue)}

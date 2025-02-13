@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
-import { useWallet } from "../components/Wallet";
 import vasServices from "../services/vasServices";
 import tvPlans from "../Modules/Plans/tvPlans.json";
-import PDFReceipt from "../components/PDFReceipt";
-import { useNavigation } from '@react-navigation/native'; // Import for navigation
 
 const CableTvScreen = () => {
   const [selectedTvType, setSelectedTvType] = useState("");
@@ -25,16 +24,28 @@ const CableTvScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState({});
+  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
   const [showReceipt, setShowReceipt] = useState(false);
   const [iucName, setIucName] = useState("");
   const [planTitle, setPlanTitle] = useState("");
-
-  // Access wallet state from WalletContext
-  const { state } = useWallet();
-  const { balance, name, lastname } = state;
-
-  // Navigation hook
   const navigation = useNavigation();
+
+  
+  // Fetch wallet details from AsyncStorage
+  useEffect(() => {
+    const fetchWalletDetails = async () => {
+      try {
+        const storedWallet = await AsyncStorage.getItem("walletDetails");
+        if (storedWallet) {
+          setWallet(JSON.parse(storedWallet));
+        }
+      } catch (error) {
+        console.error("Error fetching wallet details:", error);
+      }
+    };
+
+    fetchWalletDetails();
+  }, []);
 
   const handlePlanChange = (planId) => {
     const selectedPlan = tvPlans[selectedTvType]?.find(plan => plan.id === planId);
@@ -94,7 +105,7 @@ const CableTvScreen = () => {
       cablename: mappedCablename,
     };
 
-    if (balance < amountToPay) {
+    if (wallet.balance < amountToPay) {
       Alert.alert("Error", "Insufficient balance.");
     } else {
       try {
@@ -135,9 +146,14 @@ const CableTvScreen = () => {
 
   return (
     <ScrollView className="p-4 bg-gray-100 flex-1">
-      {/* <Text className="text-xl font-bold text-center mb-2">Welcome, {name} {lastname}</Text> */}
       <Text className="text-xl font-bold text-center mb-4">Cable TV Subscription</Text>
-      <Text className="text-lg text-center mb-4">Balance: ₦{balance}</Text>
+      {/* Display Wallet Info */}
+            <Text className="text-lg text-center mb-4">
+              Balance: ₦{wallet.balance}
+            </Text>
+            <Text className="text-lg text-center mb-4">
+              Welcome, {wallet.name} {wallet.lastname}
+            </Text>
       <View className="flex-row gap-1 pr-2 my-2">
       <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"  onPress={ ()=> navigation.navigate("Home")}>
         <Text className="text-white text-center">Home</Text>

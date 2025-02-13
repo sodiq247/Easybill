@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import PaywithPaystack from "./PaywithPaystac";
+import PaywithPaystack from "./PaywithPaystack";
 
 const FundWalletTypes = () => {
   const [activeTab, setActiveTab] = useState("gtbank");

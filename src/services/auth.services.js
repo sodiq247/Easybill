@@ -11,12 +11,17 @@ let baseUrl = "https://sdc-backend-t3j9.onrender.com/api/v1/";
 const getToken = async () => {
   try {
     const token = await AsyncStorage.getItem("access_token");
-    return token ? `Bearer ${token}` : null;
+    if (!token) {
+      console.error("Token not found in storage");
+      return null;
+    }
+    return token;
   } catch (error) {
-    console.error("Error fetching token:", error);
+    console.error("Error retrieving token:", error);
     return null;
   }
 };
+
 
 // ✅ Optional: Save token to AsyncStorage
 const setToken = async (token) => {
@@ -49,12 +54,19 @@ const accountServices = {
       }
 
       return response.data;
-    } catch (error) {
-      console.error("Error logging in:", error.response || error);
-      Alert.alert("Login Error", "Invalid credentials or server issue.");
+  } catch (error) {
+    console.error("Error fetching wallet balance:", error.response || error);
+
+    if (error.response?.data?.body?.name === "TokenExpiredError") {
+      Alert.alert("Session Expired", "Please log in again.");
+      await removeToken(); // Remove expired token
       return null;
     }
-  },
+
+    Alert.alert("Error", "Unable to fetch wallet balance.");
+    return null;
+  }
+},
 
   // 📝 User Signup
   signup: async (data) => {
@@ -115,13 +127,16 @@ const accountServices = {
       const token = await getToken();
       if (!token) throw new Error("Token not found");
 
+      // const response = await axios.get(`${baseUrl}account/verify`, {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
       const response = await axios.get(`${baseUrl}account/verify`, {
-        headers: { Authorization: token },
+        headers: { Authorization: `Bearer ${token.trim()}` }, // Trim to avoid extra spaces
       });
       return response.data;
     } catch (error) {
       console.error("Error fetching wallet balance:", error.response || error);
-      Alert.alert("Error", "Unable to fetch wallet balance.");
+      // Alert.alert("Error", "Unable to fetch wallet balance.");
       return null;
     }
   },

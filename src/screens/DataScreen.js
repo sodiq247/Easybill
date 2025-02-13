@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,13 +6,13 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Modal,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
-import { useNavigation } from '@react-navigation/native'; // Import for navigation
-import { useWallet } from "../components/Wallet";
 import vasServices from "../services/vasServices";
 import dataPlans from "../Modules/Plans/dataPlans.json";
 
@@ -24,11 +24,24 @@ const DataScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState({});
+  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
   const navigation = useNavigation();
-  
-  // Access wallet state from WalletContext
-  const { state } = useWallet();
-  const { balance, name, lastname } = state;
+
+  // Fetch wallet details from AsyncStorage
+  useEffect(() => {
+    const fetchWalletDetails = async () => {
+      try {
+        const storedWallet = await AsyncStorage.getItem("walletDetails");
+        if (storedWallet) {
+          setWallet(JSON.parse(storedWallet));
+        }
+      } catch (error) {
+        console.error("Error fetching wallet details:", error);
+      }
+    };
+
+    fetchWalletDetails();
+  }, []);
 
   const handlePlanChange = (planId) => {
     const selectedPlan = dataPlans[selectedNetwork].find(
@@ -53,23 +66,23 @@ const DataScreen = () => {
       mobile_number: mobileNumber,
       amount: amountToPay,
     };
-    if (balance < amountToPay) {
+
+    if (wallet.balance < amountToPay) {
       Alert.alert("Error", "Insufficient balance.");
     } else {
       try {
         const response = await vasServices.dataBundle(data);
-        // console.log("buy data response", response);
         if (response && !response.data.error) {
           Alert.alert("Success", "Transaction successful");
           setTransactionDetails({ ...data });
           setShowModal(false);
-        }  else {
-          Alert.alert("Error","Transaction unsuccessful");
+        } else {
+          Alert.alert("Error", "Transaction unsuccessful");
           navigation.goBack();
           setShowModal(false);
         }
       } catch (error) {
-        Alert.alert("Error", "Transaction failed.", error);
+        Alert.alert("Error", "Transaction failed.");
       }
     }
     setLoading(false);
@@ -78,23 +91,29 @@ const DataScreen = () => {
   return (
     <ScrollView className="p-4 bg-gray-100 flex-1">
       <Text className="text-xl font-bold text-center mb-4">Buy Data</Text>
-      <Text className="text-lg text-center mb-4">Balance: ₦{balance}</Text>
-       
+      
+      {/* Display Wallet Info */}
+      <Text className="text-lg text-center mb-4">
+        Balance: ₦{wallet.balance}
+      </Text>
+      <Text className="text-lg text-center mb-4">
+        Welcome, {wallet.name} {wallet.lastname}
+      </Text>
+
+      {/* Navigation Buttons */}
       <View className="flex-row gap-1 pr-2 my-2">
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"  onPress={ ()=> navigation.navigate("Home")}>
-        <Text className="text-white text-center">Home</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"  onPress={ ()=> navigation.navigate("Airtime")}>
-        <Text className="text-white text-center">Airtime</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500" onPress={ ()=> navigation.navigate("CableTv")}>
-        <Text className="text-white text-center">CableTv</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500" onPress={ ()=> navigation.navigate("Electricity")}>
-        <Text className="text-white text-center">Electricity</Text>
-      </TouchableOpacity>
+        {["Home", "Airtime", "CableTv", "Electricity"].map((screen) => (
+          <TouchableOpacity
+            key={screen}
+            className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"
+            onPress={() => navigation.navigate(screen)}
+          >
+            <Text className="text-white text-center">{screen}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
+      {/* Network Selection */}
       <View className="p-4 mb-4 border rounded-lg bg-white">
         <Picker
           selectedValue={selectedNetwork}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,9 +10,9 @@ import {
   Modal,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import CustomButton from "../components/CustomButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { useWallet } from "../components/Wallet";
+import CustomButton from "../components/CustomButton";
 import vasServices from "../services/vasServices";
 
 const AirtimeScreen = () => {
@@ -22,10 +22,24 @@ const AirtimeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState({});
+  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
   const navigation = useNavigation();
 
-  const { state } = useWallet();
-  const { balance = 0, name, lastname } = state;
+  // Fetch wallet details from AsyncStorage
+  useEffect(() => {
+    const fetchWalletDetails = async () => {
+      try {
+        const storedWallet = await AsyncStorage.getItem("walletDetails");
+        if (storedWallet) {
+          setWallet(JSON.parse(storedWallet));
+        }
+      } catch (error) {
+        console.error("Error fetching wallet details:", error);
+      }
+    };
+
+    fetchWalletDetails();
+  }, []);
 
   const handlePurchase = async () => {
     if (!selectedNetwork || !amount || !mobileNumber) {
@@ -41,7 +55,7 @@ const AirtimeScreen = () => {
       network: selectedNetwork,
     };
 
-    if (balance < Number(amount)) {
+    if (wallet.balance < Number(amount)) {
       Alert.alert("Error", "Insufficient balance.");
     } else {
     try {
@@ -66,8 +80,16 @@ const AirtimeScreen = () => {
   return (
     <ScrollView className="px-4 py-6 bg-gray-100 flex-1">
       <Text className="text-[20px] font-bold text-center mb-4">Buy Airtime</Text>
-      <Text className="text-lg text-center mb-4">Balance: ₦{balance}</Text>
-       
+     
+           {/* Display Wallet Info */}
+           <Text className="text-lg text-center mb-4">
+             Balance: ₦{wallet.balance}
+           </Text>
+           <Text className="text-lg text-center mb-4">
+             Welcome, {wallet.name} {wallet.lastname}
+           </Text>
+     
+           {/* Navigation Buttons */}
       <View className="flex-row gap-1 pr-2 my-2">
       <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"  onPress={ ()=> navigation.navigate("Home")}>
         <Text className="text-white text-center">Home</Text>
