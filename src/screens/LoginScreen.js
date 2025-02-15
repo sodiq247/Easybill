@@ -34,17 +34,19 @@ const LoginScreen = () => {
   };
 
   const handleSubmit = async () => {
+    Alert.alert(" fields are filled");
     if (!email || !password) {
       Alert.alert("Error", "Please fill all fields.");
       return;
     }
-
+    
     setLoading(true);
     const data = { username: email, password };
-
+    
+    Alert.alert("trying to submit");
     try {
       const result = await accountServices.login(data);
-        console.log("login result",)
+        console.log("login result", result)
       if (result.body.loggedIn === true) {
         await saveToken(result.body.access_token);
 
@@ -75,7 +77,7 @@ const LoginScreen = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      // Alert.alert("Error", "Login failed. Please try again.");
+      Alert.alert("Error", error);
     } finally { 
       setLoading(false);
     }
