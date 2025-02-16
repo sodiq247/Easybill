@@ -20,8 +20,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sodiq247.BillPaymentApp",
-      "permissions": ["INTERNET"]
+     "package": "com.sodiq247.BillPaymentApp",
+    "permissions": ["INTERNET"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
