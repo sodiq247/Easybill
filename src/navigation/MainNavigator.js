@@ -16,7 +16,7 @@ const MainNavigator = () => {
   return (
     // <WalletProvider>
     <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='LoginScreen'>
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
