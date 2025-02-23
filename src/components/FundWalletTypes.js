@@ -24,7 +24,7 @@ const FundWalletTypes = () => {
   };
 
   return (
-    <View className="bg-white p-6 rounded-xl shadow-lg mt-6">
+    <View className="bg-white  p-6 rounded-xl shadow-lg mt-6">
       <Text className="text-[#1F233B] text-lg font-semibold mb-4">
         Fund Your Wallet
       </Text>

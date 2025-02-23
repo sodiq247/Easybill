@@ -56,7 +56,7 @@ const HomeScreen = () => {
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear();
-      navigation.replace("Login");
+      navigation.replace("LoginScreen");
     } catch (error) {
       console.error("Error during logout:", error);
     }
@@ -65,7 +65,7 @@ const HomeScreen = () => {
   return (
     <View className="flex-1 bg-gray-100">
       {/* Sidebar */}
-      <Sidebar isVisible={sidebarVisible} toggleSidebar={() => setSidebarVisible(false)} />
+      <Sidebar isVisible={sidebarVisible} toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout} />
 
       {/* Header */}
       <Header toggleSidebar={() => setSidebarVisible(!sidebarVisible)} reloadData={loadData} logout={handleLogout} />

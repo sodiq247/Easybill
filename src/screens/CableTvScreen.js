@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,8 +6,9 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Modal,
   ActivityIndicator,
+  Modal,
+  RefreshControl,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,8 +16,12 @@ import { useNavigation } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
 import vasServices from "../services/vasServices";
 import tvPlans from "../Modules/Plans/tvPlans.json";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
 
 const CableTvScreen = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [selectedTvType, setSelectedTvType] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");
   const [smartCardNumber, setSmartCardNumber] = useState("");
@@ -30,25 +35,31 @@ const CableTvScreen = () => {
   const [planTitle, setPlanTitle] = useState("");
   const navigation = useNavigation();
 
-  
   // Fetch wallet details from AsyncStorage
-  useEffect(() => {
-    const fetchWalletDetails = async () => {
-      try {
-        const storedWallet = await AsyncStorage.getItem("walletDetails");
-        if (storedWallet) {
-          setWallet(JSON.parse(storedWallet));
-        }
-      } catch (error) {
-        console.error("Error fetching wallet details:", error);
+  const fetchWalletDetails = async () => {
+    try {
+      const storedWallet = await AsyncStorage.getItem("walletDetails");
+      if (storedWallet) {
+        setWallet(JSON.parse(storedWallet));
       }
-    };
+    } catch (error) {
+      console.error("Error fetching wallet details:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchWalletDetails();
   }, []);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchWalletDetails().finally(() => setRefreshing(false));
+  }, []);
+
   const handlePlanChange = (planId) => {
-    const selectedPlan = tvPlans[selectedTvType]?.find(plan => plan.id === planId);
+    const selectedPlan = tvPlans[selectedTvType]?.find(
+      (plan) => plan.id === planId
+    );
     if (selectedPlan) {
       setSelectedPlanId(planId);
       setAmountToPay(parseFloat(selectedPlan.amount) + 80);
@@ -83,7 +94,8 @@ const CableTvScreen = () => {
       };
       const response = await vasServices.validateIUC(data);
       const selectedPlans = tvPlans[data.cablename] || [];
-      const plan = selectedPlans.find((plan) => plan.id === data.cableplan) || {};
+      const plan =
+        selectedPlans.find((plan) => plan.id === data.cableplan) || {};
       setPlanTitle(plan.title);
       setIucName(response.data.name);
 
@@ -111,32 +123,32 @@ const CableTvScreen = () => {
       try {
         const response = await vasServices.cablesub(dataToSubmit);
         if (response && !response.data.error) {
-        Alert.alert(
-          "Success",
-          "Subscription successful.",
-          [
-            {
-              text: "Download",
-              onPress: () => setShowReceipt(true), // Show the receipt to download
-            },
-            {
-              text: "Cancel",
-              onPress: () => {
-                setShowReceipt(false);
-                // Navigate back to the refreshed CableTvScreen
-                navigation.goBack();
+          Alert.alert(
+            "Success",
+            "Subscription successful.",
+            [
+              {
+                text: "Download",
+                onPress: () => setShowReceipt(true), // Show the receipt to download
               },
-            },
-          ],
-          { cancelable: false }
-        );
-        navigation.goBack();
-        setShowModal(false);
-      } else {
-        Alert.alert("Error","Transaction unsuccessful");
-        navigation.goBack();
-        setShowModal(false);
-      }
+              {
+                text: "Cancel",
+                onPress: () => {
+                  setShowReceipt(false);
+                  // Navigate back to the refreshed CableTvScreen
+                  navigation.goBack();
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+          navigation.replace("CableTvScreen");
+          setShowModal(false);
+        } else {
+          Alert.alert("Error", "Transaction unsuccessful");
+          navigation.replace("CableTvScreen");
+          setShowModal(false);
+        }
       } catch (error) {
         Alert.alert("Error", "Transaction failed.", error);
       }
@@ -144,118 +156,136 @@ const CableTvScreen = () => {
     setLoading(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      navigation.replace("LoginScreen");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   return (
-    <ScrollView className="p-4 bg-gray-100 flex-1">
-      <Text className="text-xl font-bold text-center mb-4">Cable TV Subscription</Text>
-      {/* Display Wallet Info */}
-            <Text className="text-lg text-center mb-4">
-              Balance: ₦{wallet.balance}
-            </Text>
-            <Text className="text-lg text-center mb-4">
-              Welcome, {wallet.name} {wallet.lastname}
-            </Text>
-      <View className="flex-row gap-1 pr-2 my-2">
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"  onPress={ ()=> navigation.navigate("Home")}>
-        <Text className="text-white text-center">Home</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500" onPress={ ()=> navigation.navigate("Data")}>
-        <Text className="text-white text-center">Data</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"  onPress={ ()=> navigation.navigate("Airtime")}>
-        <Text className="text-white text-center">Airtime</Text>
-      </TouchableOpacity>
-      <TouchableOpacity className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500" onPress={ ()=> navigation.navigate("Electricity")}>
-        <Text className="text-white text-center">Electricity</Text>
-      </TouchableOpacity>
-      </View>
-      <View className="p-4 mb-4 border rounded-lg bg-white">
-        <Picker
-          selectedValue={selectedTvType}
-          onValueChange={(value) => {
-            setSelectedTvType(value);
-            setSelectedPlanId("");
-            setAmountToPay(0);
-          }}
-        >
-          <Picker.Item label="Select Cable TV" value="" />
-          <Picker.Item label="GOTV" value="GOTV" />
-          <Picker.Item label="DSTV" value="DSTV" />
-          <Picker.Item label="STARTIME" value="STARTIME" />
-        </Picker>
-      </View>
-
-      {selectedTvType && (
-        <View className="p-4 mb-4 border rounded-lg bg-white">
-          <Picker selectedValue={selectedPlanId} onValueChange={handlePlanChange}>
-            <Picker.Item label="Select Plan" value="" />
-            {tvPlans[selectedTvType]?.map((plan) => (
-              <Picker.Item key={plan.id} label={plan.title} value={plan.id} />
-            ))}
-          </Picker>
-        </View>
-      )}
-
-      <TextInput
-        value={smartCardNumber}
-        onChangeText={setSmartCardNumber}
-        placeholder="Enter Smart Card / IUC Number"
-        keyboardType="numeric"
-        className="p-4 mb-4 border rounded-lg bg-white"
+    <View className="flex-1">
+      <Sidebar
+        isVisible={sidebarVisible}
+        toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout}
+      />
+      <Header
+        toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
+        reloadData={onRefresh} logout={handleLogout}
       />
 
-      <Text className="p-4 mb-4 border rounded-lg bg-white">
-        Amount to Pay: ₦{amountToPay || "0.00"}
-      </Text>
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#3B82F6" />
-      ) : (
-        <CustomButton
-          title="Validate"
-          onPress={validateIUC}
-          style="bg-blue-500"
-        />
-      )}
-
-      <Modal
-        transparent
-        visible={showModal}
-        animationType="slide"
-        onRequestClose={() => setShowModal(false)}
+      <ScrollView
+        className="p-6 bg-gray-100 flex-1"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
-          <View className="w-80 p-6 bg-white rounded-lg">
-            <Text className="text-lg font-bold mb-4">Transaction Details</Text>
-            <Text>TV Provider: {selectedTvType}</Text>
-            <Text>Plan: {planTitle}</Text>
-            <Text>IUC Number: {smartCardNumber}</Text>
-            <Text>IUC Name: {iucName}</Text>
-            <Text>Amount: ₦{amountToPay}</Text>
-
-            <TouchableOpacity
-              className="mt-4 px-4 py-2 bg-blue-500 rounded-lg"
-              onPress={handlePurchase}
-            >
-              <Text className="text-white text-center">Proceed</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="mt-4 px-4 py-2 bg-gray-300 rounded-lg"
-              onPress={() => setShowModal(false)}
-            >
-              <Text className="text-black text-center">Cancel</Text>
-            </TouchableOpacity>
-          </View>
+        <Text className="text-xl font-bold text-center mb-4">
+          Cable TV Subscription
+        </Text>
+        {/* Display Wallet Info */}
+        <Text className="text-lg text-center mb-4">
+          Balance: ₦{wallet.balance}
+        </Text>
+        <Text className="text-lg text-center mb-4">
+          Welcome, {wallet.name} {wallet.lastname}
+        </Text>
+        <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
+          <Picker
+            selectedValue={selectedTvType}
+            onValueChange={(value) => {
+              setSelectedTvType(value);
+              setSelectedPlanId("");
+              setAmountToPay(0);
+            }}
+          >
+            <Picker.Item label="Select Cable TV" value="" />
+            <Picker.Item label="GOTV" value="GOTV" />
+            <Picker.Item label="DSTV" value="DSTV" />
+            <Picker.Item label="STARTIME" value="STARTIME" />
+          </Picker>
         </View>
-      </Modal>
 
-      {/* {showReceipt && (
+        {selectedTvType && (
+          <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
+            <Picker
+              selectedValue={selectedPlanId}
+              onValueChange={handlePlanChange}
+            >
+              <Picker.Item label="Select Plan" value="" />
+              {tvPlans[selectedTvType]?.map((plan) => (
+                <Picker.Item key={plan.id} label={plan.title} value={plan.id} />
+              ))}
+            </Picker>
+          </View>
+        )}
+
+        <TextInput
+          value={smartCardNumber}
+          onChangeText={setSmartCardNumber}
+          placeholder="Enter Smart Card / IUC Number"
+          keyboardType="numeric"
+          className="p-4 mb-4 border rounded-lg bg-white"
+        />
+
+        <Text className="p-4 mb-4 border rounded-lg bg-white">
+          Amount to Pay: ₦{amountToPay || "0.00"}
+        </Text>
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#1F233B" />
+        ) : (
+          <CustomButton
+            title="Validate"
+            onPress={validateIUC}
+            style="bg-[#1F233B]"
+          />
+        )}
+
+        <Modal
+          transparent
+          visible={showModal}
+          animationType="slide"
+          onRequestClose={() => setShowModal(false)}
+        >
+          <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
+            <View className="w-80 p-6 bg-white rounded-lg shadow-lg">
+              <Text className="text-lg font-bold mb-4">
+                Transaction Details
+              </Text>
+              <Text>TV Provider: {selectedTvType}</Text>
+              <Text>Plan: {planTitle}</Text>
+              <Text>IUC Number: {smartCardNumber}</Text>
+              <Text>IUC Name: {iucName}</Text>
+              <Text>Amount: ₦{amountToPay}</Text>
+
+              <TouchableOpacity
+                className="mt-4 px-4 py-2 bg-[#1F233B] rounded-lg"
+                onPress={handlePurchase}
+              >
+                <Text className="text-white text-center">Proceed</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="mt-4 px-4 py-2 bg-gray-300 rounded-lg"
+                onPress={() => setShowModal(false)}
+              >
+                <Text className="text-black text-center">Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
+        {/* {showReceipt && (
         <PDFReceipt
           show={showReceipt}
           onHide={() => setShowReceipt(false)}
           transactionDetails={transactionDetails}
         />
       )} */}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
