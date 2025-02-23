@@ -4,104 +4,109 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
-  StyleSheet,
+  RefreshControl,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import vasServices from "../services/vasServices";
 import FundWalletTypes from "../components/FundWalletTypes";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
 
 const HomeScreen = () => {
   const [transactions, setTransactions] = useState([]);
   const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
+  const [refreshing, setRefreshing] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const navigation = useNavigation();
 
+  const fetchWalletDetails = async () => {
+    try {
+      const storedWallet = await AsyncStorage.getItem("walletDetails");
+      if (storedWallet) {
+        setWallet(JSON.parse(storedWallet));
+      }
+    } catch (error) {
+      console.error("Error fetching wallet details:", error);
+    }
+  };
+
+  const fetchTransactions = async () => {
+    try {
+      const response = await vasServices.getTransaction();
+      if (response.status === 1) {
+        setTransactions(response.data.slice(0, 10));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const loadData = async () => {
+    setRefreshing(true);
+    await fetchWalletDetails();
+    await fetchTransactions();
+    setRefreshing(false);
+  };
+
   useEffect(() => {
-    const fetchWalletDetails = async () => {
-      try {
-        const storedWallet = await AsyncStorage.getItem("walletDetails");
-        if (storedWallet) {
-          setWallet(JSON.parse(storedWallet));
-        }
-      } catch (error) {
-        console.error("Error fetching wallet details:", error);
-      }
-    };
-
-    const fetchTransactions = async () => {
-      try {
-        const response = await vasServices.getTransaction();
-        if (response.status === 1) {
-          setTransactions(response.data.slice(0, 10)); // Get the last 10 transactions
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchWalletDetails();
-    fetchTransactions();
+    loadData();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      navigation.replace("Login");
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.welcomeText}>
-        Welcome, {wallet.name} {wallet.lastname}
-      </Text>
-      <Text style={styles.balanceText}>Balance: ₦{wallet.balance}</Text>
-      <View className="flex-row gap-1 pr-2 my-2">
-        {["Data", "Airtime", "CableTv", "Electricity"].map((service) => (
-          <TouchableOpacity
-            key={service}
-            className="px-2 py-2 w-[25%] rounded-full border-2 bg-green-500 border-green-500"
-            onPress={() => navigation.navigate(service)}
-          >
-            <Text className="text-white text-center">{service}</Text>
-          </TouchableOpacity>
-        ))}
+    <View className="flex-1 bg-gray-100">
+      {/* Sidebar */}
+      <Sidebar isVisible={sidebarVisible} toggleSidebar={() => setSidebarVisible(false)} />
+
+      {/* Header */}
+      <Header toggleSidebar={() => setSidebarVisible(!sidebarVisible)} reloadData={loadData} logout={handleLogout} />
+
+      <View className="p-6">
+        <Text className=" text-2xl font-semibold text-center">
+           {wallet.name} {wallet.lastname}
+        </Text>
+        <Text className=" text-lg text-center mb-4">
+          Balance: ₦{wallet.balance}
+        </Text>
+
+        <FundWalletTypes />
+
+        {/* Transactions List with Pull-to-Refresh */}
+        <FlatList
+          data={transactions}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View className="p-4 bg-[#1F233B] rounded-lg mb-2">
+              <Text className=" font-bold">
+                {item.transaction_ref} - ₦{item.amount}
+              </Text>
+              <Text className="text-gray-400">
+                {new Date(item.createdAt).toLocaleDateString()}
+              </Text>
+              <Text className={`font-bold ${item.status === 1 ? "text-green-400" : "text-red-400"}`}>
+                {item.status === 1 ? "Success" : "Failed"}
+              </Text>
+            </View>
+          )}
+          ListHeaderComponent={
+            <Text className="text-lg font-bold  mb-2">Recent Transactions</Text>
+          }
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={loadData} />
+          }
+        />
       </View>
-      <FundWalletTypes />
-      <FlatList
-        data={transactions}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.transactionItem}>
-            <Text style={styles.transactionRef}>
-              {item.transaction_ref} - ₦{item.amount}
-            </Text>
-            <Text style={styles.transactionDate}>
-              {new Date(item.createdAt).toLocaleDateString()}
-            </Text>
-            <Text style={styles.transactionStatus}>
-              {item.status === 1 ? "Success" : "Failed"}
-            </Text>
-          </View>
-        )}
-        ListHeaderComponent={
-          <Text style={styles.headerText}>Recent Transactions</Text>
-        }
-      />
-      <TouchableOpacity
-        style={styles.viewAllButton}
-        onPress={() => navigation.navigate("TransactionHistory")}
-      >
-        <Text style={styles.buttonText}>View All Transactions</Text>
-      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: "#F3F4F6", flex: 1 },
-  welcomeText: { fontSize: 20, fontWeight: "bold", textAlign: "center" },
-  balanceText: { fontSize: 18, textAlign: "center", marginBottom: 16 },
-  headerText: { fontSize: 16, fontWeight: "bold", marginBottom: 8 },
-  transactionItem: { padding: 12, backgroundColor: "#FFFFFF", borderRadius: 8, marginBottom: 8 },
-  transactionRef: { fontWeight: "bold" },
-  transactionDate: { color: "#6B7280" },
-  transactionStatus: { color: "#10B981" },
-  viewAllButton: { marginTop: 16, backgroundColor: "#3B82F6", padding: 12, borderRadius: 8 },
-  buttonText: { color: "#FFFFFF", textAlign: "center", fontWeight: "bold" },
-});
 
 export default HomeScreen;

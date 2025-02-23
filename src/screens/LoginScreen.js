@@ -49,6 +49,7 @@ const LoginScreen = () => {
 
     try {
       const result = await accountServices.login(data);
+      console.log("result", result)
 
       if (result.body.loggedIn) {
         await saveToken(result.body.access_token);
@@ -73,10 +74,11 @@ const LoginScreen = () => {
           console.error("Error fetching wallet balance:", walletError);
         }
       } else {
-        console.error("Error", result.data?.message || "Login failed.");
+        console.error("Error", result.message || "Login failed.");
+        Alert.alert("Error", result.message || "Login failed.");
       }
     } catch (error) {
-      // console.error("Login error:", error);
+      console.log("Error", "Login failed. Please try again.", error);
       Alert.alert("Error", "Login failed. Please try again.");
     } finally {
       setLoading(false);

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TextInput, ActivityIndicator, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
 import { Paystack } from "react-native-paystack-webview";
 import CustomButton from "./CustomButton";
 import vasServices from "../services/vasServices";
@@ -51,7 +51,7 @@ const PaywithPaystack = () => {
 
   
   return (
-    <View className="bg-gray-50 p-4 rounded-lg shadow-lg">
+    <View className="bg-gray-60 p-4 rounded-lg shadow-lg">
       <Text className="text-lg font-bold text-gray-800 mb-4">Pay with Paystack</Text>
 
       <View className="mb-4">
@@ -76,15 +76,28 @@ const PaywithPaystack = () => {
         />
       </View>
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#3B82F6" />
+      {/* {loading ? (
+        <ActivityIndicator color="#fff" />
       ) : (
         <CustomButton
           title="Pay Now"
           onPress={() => setPaystackVisible(true)}
           style="bg-blue-500"
         />
-      )}
+      )} */}
+
+      <TouchableOpacity
+                className="w-full bg-[#14172A] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
+                onPress={() => setPaystackVisible(true)}
+
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text className="text-white font-semibold">Pay Now</Text>
+                )}
+              </TouchableOpacity>
 
       {paystackVisible && (
         <Paystack
