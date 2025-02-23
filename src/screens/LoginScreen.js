@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { EyeIcon, EyeSlashIcon } from "lucide-react-native";
+import { Eye, EyeOff } from "lucide-react-native";
 import accountServices from "../services/auth.services";
 
 const LoginScreen = () => {
@@ -21,7 +24,7 @@ const LoginScreen = () => {
 
   const saveToken = async (token) => {
     try {
-      await AsyncStorage.setItem("access_token", token);
+      await AsyncStorage.setItem("access_token", JSON.stringify(token));
     } catch (e) {
       console.error("Error saving token:", e);
     }
@@ -49,11 +52,8 @@ const LoginScreen = () => {
 
     try {
       const result = await accountServices.login(data);
-      console.log("result", result)
-
       if (result.body.loggedIn) {
         await saveToken(result.body.access_token);
-
         try {
           const walletResult = await accountServices.walletBalance();
           const walletDetails = {
@@ -62,102 +62,121 @@ const LoginScreen = () => {
             lastname: walletResult.Profile?.lastname || "",
           };
           await saveWalletDetails(walletDetails);
-
-          Alert.alert("Success", "Login successful!");
-          setTimeout(() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: "Home" }],
-            });
-          }, 500);
         } catch (walletError) {
           console.error("Error fetching wallet balance:", walletError);
+          await saveWalletDetails({ balance: 0, name: "", lastname: "" });
         }
+
+        Alert.alert("Success", "Login successful!");
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "Home" }],
+          });
+        }, 500);
       } else {
-        console.error("Error", result.message || "Login failed.");
         Alert.alert("Error", result.message || "Login failed.");
       }
     } catch (error) {
-      console.log("Error", "Login failed. Please try again.", error);
       Alert.alert("Error", "Login failed. Please try again.");
+      console.log("Error", error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View className="flex-1 bg-[#14172A] p-5 justify-center items-center">
-      <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
-        <Text
-          style={{ fontFamily: "Lufga" }}
-          className="font-semibold  text-4xl text-[#14172A] text-center leading-[65.26px]"
-        >
-          Login
-        </Text>
-        <Text className="text-gray-600 text-center mb-6">
-          Welcome back! Please enter your details to continue.
-        </Text>
-
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-
-        <View className="relative mt-4">
-          <TextInput
-            style={{ fontFamily: "Lufga" }}
-            className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-            placeholder="Password"
-            value={password}
-            secureTextEntry={!showPassword}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity
-            className="absolute right-4 top-4"
-            onPress={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <EyeSlashIcon size={20} /> : <EyeIcon size={20} />}
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          className="w-full bg-[#14172A] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
-          onPress={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text className="text-white font-semibold">Login</Text>
-          )}
-        </TouchableOpacity>
-
-        <View className="flex flex-col justify-between mt-4 font-spaceGrotesk">
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ForgotPassword")}
-          >
-            <Text className="font-semibold text--[#14172A] underline">
-              Forgot Password
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1"
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View className="flex-1 bg-[#14172A] p-5 justify-center items-center">
+          <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+            <Text
+              style={{ fontFamily: "Lufga" }}
+              className="font-semibold text-4xl text-[#14172A] text-center leading-[65.26px]"
+            >
+              Login
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
-            <Text className="text-[#14172A]">
-              Don’t have an account?{" "}
-              <Text className="font-semibold text--[#14172A] underline">
-                Sign Up
-              </Text>
+            <Text
+              style={{ fontFamily: "Lufga" }}
+              className="text-gray-600 text-center mb-6"
+            >
+              Welcome back! Please enter your details to continue.
             </Text>
-          </TouchableOpacity>
+
+            <TextInput
+              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-gray-500"
+              placeholder="Email Address"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <View className="relative mt-4">
+              <View className="flex-row items-center border border-gray-300 rounded-lg bg-gray-50">
+                <TextInput
+                  className="flex-1 p-3"
+                  placeholder="Password"
+                  value={password}
+                  secureTextEntry={!showPassword}
+                  onChangeText={setPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity
+                  className="p-3"
+                  onPress={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? (
+                    <EyeOff size={24} color="#14172A" />
+                  ) : (
+                    <Eye size={24} color="#14172A" />
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              className="w-full bg-[#14172A] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
+              onPress={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white font-semibold">Login</Text>
+              )}
+            </TouchableOpacity>
+
+            <View className="flex flex-col justify-between mt-4">
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ForgotPassword")}
+              >
+                <Text className="font-semibold text-[#14172A] underline">
+                  Forgot Password
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("SignupScreen")}
+              >
+                <Text className="text-[#14172A]">
+                  Don’t have an account?
+                  <Text className="font-semibold text-[#14172A] underline">
+                    Sign Up
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Text className="text-white text-xs mt-6">
+            © Copyright *Company* 2025. All Rights Reserved.
+          </Text>
         </View>
-      </View>
-      <Text className="text-white text-xs mt-6">
-        © Copyright *Company* 2025. All Rights Reserved.
-      </Text>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -1,5 +1,12 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import { Paystack } from "react-native-paystack-webview";
 import CustomButton from "./CustomButton";
 import vasServices from "../services/vasServices";
@@ -17,42 +24,55 @@ const PaywithPaystack = () => {
     setPaystackVisible(false);
 
     try {
-        const transactionReference = response?.transactionRef?.reference;
-        if (!transactionReference) {
-            throw new Error("Transaction reference not found");
-        }
+      const transactionReference = response?.transactionRef?.reference;
+      if (!transactionReference) {
+        throw new Error("Transaction reference not found");
+      }
 
-        const verifyUrl = `https://api.paystack.co/transaction/verify/${transactionReference}`;
-        const res = await axios.get(verifyUrl, {
-            headers: {
-                Authorization: `Bearer sk_test_fcad21719bcdddaaa51a90430b0c9c244ddce10e`,
-                "Content-Type": "application/json",
-            },
-        });
+      const verifyUrl = `https://api.paystack.co/transaction/verify/${transactionReference}`;
+      const res = await axios.get(verifyUrl, {
+        headers: {
+          Authorization: `Bearer sk_test_fcad21719bcdddaaa51a90430b0c9c244ddce10e`,
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (res.data.status && res.data.data.status === "success") {
-            const amount = res.data.data.amount / 100; // Convert from kobo to Naira
-            console.log("Verified amount:", amount);
+      if (res.data.status && res.data.data.status === "success") {
+        const amount = res.data.data.amount / 100; // Convert from kobo to Naira
+        console.log("Verified amount:", amount);
 
-            const response = await vasServices.creditWallet(amount);
-            console.log("Fund Wallet Response:", response);
+        const response = await vasServices.creditWallet(amount);
+        console.log("Fund Wallet Response:", response);
 
-            Alert.alert("Payment Successful", "Your wallet has been credited successfully.");
-        } else {
-            Alert.alert("Payment Failed", "Verification failed. Please contact support.");
-        }
+        Alert.alert(
+          "Payment Successful",
+          "Your wallet has been credited successfully."
+        );
+      } else {
+        Alert.alert(
+          "Payment Failed",
+          "Verification failed. Please contact support."
+        );
+      }
     } catch (error) {
-        console.error("Verification Error:", error.response?.data || error.message);
-        Alert.alert("Verification Error", "Could not verify payment. Please try again.");
+      console.error(
+        "Verification Error:",
+        error.response?.data || error.message
+      );
+      Alert.alert(
+        "Verification Error",
+        "Could not verify payment. Please try again."
+      );
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
-  
   return (
     <View className="bg-gray-60 p-4 rounded-lg shadow-lg">
-      <Text className="text-lg font-bold text-gray-800 mb-4">Pay with Paystack</Text>
+      <Text className="text-lg font-bold text-gray-800 mb-4">
+        Pay with Paystack
+      </Text>
 
       <View className="mb-4">
         <Text className="text-sm font-medium text-gray-600">Amount</Text>
@@ -75,30 +95,17 @@ const PaywithPaystack = () => {
           onChangeText={setEmail}
         />
       </View>
-
-      {/* {loading ? (
-        <ActivityIndicator color="#fff" />
-      ) : (
-        <CustomButton
-          title="Pay Now"
-          onPress={() => setPaystackVisible(true)}
-          style="bg-blue-500"
-        />
-      )} */}
-
       <TouchableOpacity
-                className="w-full bg-[#14172A] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
-                onPress={() => setPaystackVisible(true)}
-
-                disabled={loading}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#fff" />
-                ) : (
-                  <Text className="text-white font-semibold">Pay Now</Text>
-                )}
-              </TouchableOpacity>
-
+        className="w-full bg-[#14172A] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
+        onPress={() => setPaystackVisible(true)}
+        disabled={loading}
+      >
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text className="text-white font-semibold">Pay Now</Text>
+        )}
+      </TouchableOpacity>
       {paystackVisible && (
         <Paystack
           ref={paystackWebViewRef}

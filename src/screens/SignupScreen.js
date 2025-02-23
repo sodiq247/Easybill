@@ -11,12 +11,13 @@ import {
 import { useNavigation } from "@react-navigation/native";
 // import loginImage from "../assets/images/login-Image.svg";
 // import loginImagebg from "../assets/images/login-Image-bg.svg";
-import loginFormbg from "../../assets/images/login-form-bg.svg";
+// import loginFormbg from "../../assets/images/login-form-bg.svg";
 // import BackIcon from "../../assets/images/back-icon.svg";
 // import PersonalDetails from "../assets/images/personal-details.svg";
 // import Security from "../assets/images/security.svg";
 import accountServices from "../services/auth.services";
-import CustomButton from "../components/CustomButton";
+// import CustomButton from "../components/CustomButton";
+import { Eye, EyeOff } from "lucide-react-native"; // Correct import
 
 const SignupScreen = () => {
   const [firstname, setFirstname] = useState("");
@@ -26,13 +27,23 @@ const SignupScreen = () => {
   const [pin, setPin] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigation = useNavigation();
 
-
   const validateInput = () => {
-    return firstname && lastname && email && phone && pin && password && confirmPassword && password === confirmPassword;
+    return (
+      firstname &&
+      lastname &&
+      email &&
+      phone &&
+      pin &&
+      password &&
+      confirmPassword &&
+      password === confirmPassword
+    );
   };
 
   const handleSubmit = async () => {
@@ -55,7 +66,7 @@ const SignupScreen = () => {
 
     try {
       const result = await accountServices.signup(data);
-      console.log("result", result)
+      console.log("result", result);
       if (result.message === "SUCCESSFUL") {
         Alert.alert(result.body);
         setTimeout(() => {
@@ -75,7 +86,7 @@ const SignupScreen = () => {
 
   return (
     <View
-      style={{ backgroundImage: `url(${loginFormbg})` }}
+      // style={{ backgroundImage: `url(${loginFormbg})` }}
       className="flex-1 bg-[#14172A] p-5 justify-center items-center"
     >
       <View className="w-full mt-4 max-w-sm bg-white p-6 rounded-lg shadow-md">
@@ -141,23 +152,51 @@ const SignupScreen = () => {
           secureTextEntry
           className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
         />
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Password"
-          secureTextEntry
-          className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-        />
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          placeholder="Confirm Password"
-          secureTextEntry
-          className="p-3 mt-4 border border-gray-300 rounded-lg bg-white"
-        />
-        {error && <Text className="text-red-500 text-center">{error}</Text>}
+        <View className="relative mt-4">
+          <View className="flex-row items-center border border-gray-300 rounded-lg bg-gray-50">
+            <TextInput
+              style={{ fontFamily: "Lufga", flex: 1, padding: 12 }}
+              className="p-3"
+              placeholder="Password"
+              value={password}
+              secureTextEntry={!showPassword}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              className="p-3"
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <EyeOff size={20} color="#14172A" />
+              ) : (
+                <Eye size={20} color="#14172A" />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View className="relative mt-4">
+          <View className="flex-row items-center border border-gray-300 rounded-lg bg-gray-50">
+            <TextInput
+              style={{ fontFamily: "Lufga", flex: 1, padding: 12 }}
+              className="p-3"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              secureTextEntry={!showConfirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity
+              className="p-3"
+              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? (
+                <EyeOff size={20} color="#14172A" />
+              ) : (
+                <Eye size={20} color="#14172A" />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
         {/* <View className="flex-row justify-between mt-4">
               <CustomButton
                 title="Back"
