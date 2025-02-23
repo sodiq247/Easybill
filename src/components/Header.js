@@ -6,7 +6,7 @@ const Header = ({ toggleSidebar, reloadData, logout }) => {
   return (
     <View className="flex-row  items-center justify-between bg-[#14172A] p-5">
       
-      <Text className="text-white text-3xl font-semibold">EasyPay</Text>
+      <Text  style={{ fontFamily: "Lufga" }} className="text-white text-3xl font-semibold">EasyBill</Text>
       <View className="flex-row gap-5">
         <TouchableOpacity onPress={reloadData}>
           <RefreshCcw size={28} color="white" />
