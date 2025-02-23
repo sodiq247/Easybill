@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
 import DataScreen from '../screens/DataScreen';
 import AirtimeScreen from '../screens/AirtimeScreen';
@@ -19,6 +20,7 @@ const MainNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='LoginScreen'>
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
+        <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Data" component={DataScreen} />
         <Stack.Screen name="Airtime" component={AirtimeScreen} />

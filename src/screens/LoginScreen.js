@@ -145,7 +145,7 @@ const LoginScreen = () => {
 
         <View className="flex flex-col justify-between mt-4 font-spaceGrotesk">
           <TouchableOpacity
-            onPress={() => navigation.navigate("ForgotPassword")}
+            onPress={() => navigation.navigate("ForgotPasswordScreen")}
           >
             <Text className="font-semibold text--[#14172A] underline">
               Forgot Password
