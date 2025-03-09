@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  SafeAreaView,
   Modal,
   RefreshControl,
 } from "react-native";
@@ -17,6 +18,7 @@ import CustomButton from "../components/CustomButton";
 import vasServices from "../services/vasServices";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import accountServices from "../services/auth.services";
 
 const AirtimeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -29,20 +31,26 @@ const AirtimeScreen = () => {
   const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
   const navigation = useNavigation();
 
+  useEffect(() => {
+    // Fetch wallet balance whenever the page is reloaded
+    fetchWalletDetails();
+  }, []);
+  
+  // Reusable function to fetch wallet details
   const fetchWalletDetails = async () => {
     try {
-      const storedWallet = await AsyncStorage.getItem("walletDetails");
-      if (storedWallet) {
-        setWallet(JSON.parse(storedWallet));
-      }
+      const walletResult = await accountServices.walletBalance();
+      // console.log("Wallet Result:", walletResult);
+      const walletDetails = {
+        balance: walletResult.Wallet?.amount || 0,
+        name: walletResult.Profile?.firstname || "",
+        lastName: walletResult.Profile?.lastname || "",
+      };
+      setWallet(walletDetails); // Set the fetched wallet details
     } catch (error) {
       console.error("Error fetching wallet details:", error);
     }
   };
-
-  useEffect(() => {
-    fetchWalletDetails();
-  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -101,7 +109,7 @@ const AirtimeScreen = () => {
   };
 
   return (
-    <View className="flex-1">
+    <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
      <Sidebar
         isVisible={sidebarVisible}
         toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout}
@@ -112,7 +120,7 @@ const AirtimeScreen = () => {
       />
 
       <ScrollView
-        className="p-6 bg-gray-100 flex-1"
+        className="p-6 bg-red-100 flex-1"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -195,7 +203,7 @@ const AirtimeScreen = () => {
           </View>
         </Modal>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Modal,
+  SafeAreaView,
   RefreshControl,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
@@ -18,6 +19,7 @@ import vasServices from "../services/vasServices";
 import dataPlans from "../Modules/Plans/dataPlans.json";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import accountServices from "../services/auth.services";
 
 const DataScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -32,20 +34,26 @@ const DataScreen = () => {
   const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
   const navigation = useNavigation();
 
+ useEffect(() => {
+    // Fetch wallet balance whenever the page is reloaded
+    fetchWalletDetails();
+  }, []);
+  
+  // Reusable function to fetch wallet details
   const fetchWalletDetails = async () => {
     try {
-      const storedWallet = await AsyncStorage.getItem("walletDetails");
-      if (storedWallet) {
-        setWallet(JSON.parse(storedWallet));
-      }
+      const walletResult = await accountServices.walletBalance();
+      // console.log("Wallet Result:", walletResult);
+      const walletDetails = {
+        balance: walletResult.Wallet?.amount || 0,
+        name: walletResult.Profile?.firstname || "",
+        lastName: walletResult.Profile?.lastname || "",
+      };
+      setWallet(walletDetails); // Set the fetched wallet details
     } catch (error) {
       console.error("Error fetching wallet details:", error);
     }
   };
-
-  useEffect(() => {
-    fetchWalletDetails();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -105,18 +113,20 @@ const DataScreen = () => {
   };
 
   return (
-    <View className="flex-1">
+    <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
       <Sidebar
         isVisible={sidebarVisible}
-        toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout}
+        toggleSidebar={() => setSidebarVisible(false)}
+        logout={handleLogout}
       />
       <Header
         toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-        reloadData={onRefresh} logout={handleLogout}
+        reloadData={onRefresh}
+        logout={handleLogout}
       />
 
       <ScrollView
-        className="p-6 bg-gray-100 flex-1"
+        className="p-6 bg-red-100 flex-1"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -229,7 +239,7 @@ const DataScreen = () => {
           </View>
         </Modal>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

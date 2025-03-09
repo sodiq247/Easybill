@@ -4,7 +4,7 @@ import { RefreshCcw, LogOut, Menu } from "lucide-react-native";
 
 const Header = ({ toggleSidebar, reloadData, logout }) => {
   return (
-    <View className="flex-row  items-center justify-between bg-[#14172A] p-5">
+    <View className="flex-row items-center justify-between bg-[#14172A] p-5">
       
       <Text  style={{ fontFamily: "Lufga" }} className="text-white text-3xl font-semibold">EasyBill</Text>
       <View className="flex-row gap-5">

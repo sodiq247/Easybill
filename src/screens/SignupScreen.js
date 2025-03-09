@@ -7,6 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  ImageBackground,
+  Image
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // import loginImage from "../assets/images/login-Image.svg";
@@ -39,7 +41,6 @@ const SignupScreen = () => {
       lastname &&
       email &&
       phone &&
-      pin &&
       password &&
       confirmPassword &&
       password === confirmPassword
@@ -54,6 +55,7 @@ const SignupScreen = () => {
 
     setLoading(true);
     const role = "user";
+    const pin = "1234";
     const data = {
       firstname,
       lastname,
@@ -85,13 +87,16 @@ const SignupScreen = () => {
   };
 
   return (
-    <View
-      // style={{ backgroundImage: `url(${loginFormbg})` }}
-      className="flex-1 bg-[#14172A] p-5 justify-center items-center"
+    <ImageBackground 
+      source={require("../../assets/icon.png")}
+      className="flex-1 p-5 justify-center items-center"
     >
       <View className="w-full mt-4 max-w-sm bg-white p-6 rounded-lg shadow-md">
         <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
           {/* <img src={BackIcon} alt="back-icon" /> */}
+          <Image 
+      source={require("../../assets/icon.png")}
+      className="flex-1 p-5 justify-center items-center w-5 h-5"/>
           <Text className="w-full my-4 flex gap-1 text-gray-500 text-left">
             Back to{" "}
             <Text className="underline ml-1 text-[#14172A] font-semibold">
@@ -143,15 +148,7 @@ const SignupScreen = () => {
           keyboardType="numeric"
           className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
         />
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          value={pin}
-          onChangeText={setPin}
-          placeholder="Transaction PIN"
-          keyboardType="numeric"
-          secureTextEntry
-          className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-        />
+        
         <View className="relative mt-4">
           <View className="flex-row items-center border border-gray-300 rounded-lg bg-gray-50">
             <TextInput
@@ -227,7 +224,7 @@ const SignupScreen = () => {
           )}
         </TouchableOpacity>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 

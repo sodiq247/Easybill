@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  SafeAreaView,
   Modal,
   RefreshControl,
 } from "react-native";
@@ -17,6 +18,7 @@ import CustomButton from "../components/CustomButton";
 import vasServices from "../services/vasServices";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import accountServices from "../services/auth.services";
 
 const ElectricityScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
@@ -32,21 +34,26 @@ const ElectricityScreen = () => {
   const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
   const navigation = useNavigation();
 
-  // Fetch wallet details from AsyncStorage
+  useEffect(() => {
+    // Fetch wallet balance whenever the page is reloaded
+    fetchWalletDetails();
+  }, []);
+
+  // Reusable function to fetch wallet details
   const fetchWalletDetails = async () => {
     try {
-      const storedWallet = await AsyncStorage.getItem("walletDetails");
-      if (storedWallet) {
-        setWallet(JSON.parse(storedWallet));
-      }
+      const walletResult = await accountServices.walletBalance();
+      // console.log("Wallet Result:", walletResult);
+      const walletDetails = {
+        balance: walletResult.Wallet?.amount || 0,
+        name: walletResult.Profile?.firstname || "",
+        lastName: walletResult.Profile?.lastname || "",
+      };
+      setWallet(walletDetails); // Set the fetched wallet details
     } catch (error) {
       console.error("Error fetching wallet details:", error);
     }
   };
-
-  useEffect(() => {
-    fetchWalletDetails();
-  }, []);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -60,11 +67,12 @@ const ElectricityScreen = () => {
     }
     setLoading(true);
     const data = {
-      disconame: selectedDisco,
-      meternumber: meterNumber,
-      mtype: meterType,
+      disco_name: selectedDisco,
+      meter_number: meterNumber,
+      MeterType: meterType,
       amount: Number(amount),
     };
+    console.log("data", data);
     try {
       const response = await vasServices.validateMeter(data);
       if (response && !response.error) {
@@ -127,18 +135,20 @@ const ElectricityScreen = () => {
   };
 
   return (
-    <View className="flex-1">
+    <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
       <Sidebar
         isVisible={sidebarVisible}
-        toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout}
+        toggleSidebar={() => setSidebarVisible(false)}
+        logout={handleLogout}
       />
       <Header
         toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-        reloadData={onRefresh} logout={handleLogout}
+        reloadData={onRefresh}
+        logout={handleLogout}
       />
 
       <ScrollView
-        className="p-6 bg-gray-100 flex-1"
+        className="p-6 bg-red-100 flex-1"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -159,15 +169,17 @@ const ElectricityScreen = () => {
             onValueChange={(itemValue) => setSelectedDisco(itemValue)}
           >
             <Picker.Item label="Select Disco" value="" />
-            <Picker.Item label="Ikeja Electric" value="Ikeja Electric" />
-            <Picker.Item label="Eko Electric" value="Eko Electric" />
-            <Picker.Item label="Abuja Electric" value="Abuja Electric" />
-            <Picker.Item label="Kano Electric" value="Kano Electric" />
-            <Picker.Item label="Enugu Electric" value="Enugu Electric" />
-            <Picker.Item
-              label="Port Harcourt Electric"
-              value="Port Harcourt Electric"
-            />
+            <Picker.Item value="18" label="Ikeja Electric" />
+            <Picker.Item value="20" label="Eko Electric" />
+            <Picker.Item value="25" label="Abuja Electric" />
+            <Picker.Item value="23" label="Kano Electric" />
+            <Picker.Item value="26" label="Enugu Electric" />
+            <Picker.Item value="21" label="Port Harcourt Electric" />
+            <Picker.Item value="19" label="Ibadan Electric" />
+            <Picker.Item value="22" label="Kaduna Electric" />
+            <Picker.Item value="24" label="Jos Electric" />
+            <Picker.Item value="28" label="Yola Electric" />
+            <Picker.Item value="29" label="Benin Electric" />
           </Picker>
         </View>
 
@@ -232,12 +244,21 @@ const ElectricityScreen = () => {
               <Text>Amount: ₦{amountToPay}</Text>
               <Text>Name: {transactionDetails.name}</Text>
               <Text>Address: {transactionDetails.address}</Text>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 className="mt-4 px-4 py-2 bg-[#1F233B] rounded-lg"
                 onPress={handlePurchase}
               >
                 <Text className="text-white text-center">Proceed</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+              {loading ? (
+                <ActivityIndicator size="large" color="#1F233B" />
+              ) : (
+                <CustomButton
+                  title="Proceed"
+                  onPress={handlePurchase}
+                  style="mt-4 px-4 py-2 bg-[#1F233B] rounded-lg"
+                />
+              )}
               <TouchableOpacity
                 className="mt-4 px-4 py-2 bg-gray-300 rounded-lg"
                 onPress={() => setShowModal(false)}
@@ -248,7 +269,7 @@ const ElectricityScreen = () => {
           </View>
         </Modal>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 

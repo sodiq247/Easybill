@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Phone, Database, Tv, LogOut, Zap, X } from "lucide-react-native";
+import { Phone, Database, Tv, LogOut, Zap, Home, X } from "lucide-react-native";
 
 const Sidebar = ({ isVisible, toggleSidebar, logout }) => {
   const navigation = useNavigation();
@@ -9,6 +9,7 @@ const Sidebar = ({ isVisible, toggleSidebar, logout }) => {
   if (!isVisible) return null;
 
   const services = [
+    { name: "Home", icon: <Home size={24} color="white" /> },
     { name: "Data", icon: <Database size={24} color="white" /> },
     { name: "Airtime", icon: <Phone size={24} color="white" /> },
     { name: "CableTv", icon: <Tv size={24} color="white" /> },
@@ -37,7 +38,7 @@ const Sidebar = ({ isVisible, toggleSidebar, logout }) => {
           <Text className="text-white text-lg font-medium">{service.name}</Text>
         </TouchableOpacity>
       ))}
-      <TouchableOpacity onPress={logout} className=" flex-row gap-3 mt-[200px] bg-[#14172A] p-4 rounded-lg">
+      <TouchableOpacity onPress={logout} className=" flex-row gap-3 mt-[100px] bg-[#14172A] p-4 rounded-lg">
         <LogOut size={28} color="white"  />
         <Text className="text-white font-semibold text-[18px]">LogOut</Text>
       </TouchableOpacity>

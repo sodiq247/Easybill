@@ -110,7 +110,7 @@ const PaywithPaystack = () => {
         <Paystack
           ref={paystackWebViewRef}
           showPayButton={false}
-          paystackKey="pk_test_2fa77e4d6a3815e581c8f57a3e9c872bd2acd626"
+          paystackKey="pk_live_f16d1e2318b3a040165ffad5c215f26b5f1206e1"
           amount={parseInt(amount)}
           billingEmail={email}
           activityIndicatorColor="green"

@@ -162,7 +162,7 @@ const LoginScreen = () => {
         </View>
       </View>
       <Text className="text-white text-xs mt-6">
-        © Copyright *Company* 2025. All Rights Reserved.
+        © Copyright Easybill 2025. All Rights Reserved.
       </Text>
     </View>
   );

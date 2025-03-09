@@ -3,22 +3,22 @@ import { View, Text, TouchableOpacity } from "react-native";
 import PaywithPaystack from "./PaywithPaystack";
 
 const FundWalletTypes = () => {
-  const [activeTab, setActiveTab] = useState("gtbank");
+  const [activeTab, setActiveTab] = useState("paystack");
 
   const bankDetails = {
-    gtbank: {
-      accountNumber: "0160157649",
-      accountName: "Supreme Data Concept",
-      bankName: "GTBank",
-    },
-    // opay: {
-    //   accountNumber: "8105082299",
-    //   accountName: "Supreme Data Concept",
-    //   bankName: "Opay",
+    // gtbank: {
+    //   accountNumber: "0160157649",
+    //   accountName: "Abdulrazaq Sodiq",
+    //   bankName: "GTBank",
     // },
+    opay: {
+      accountNumber: "8105082299",
+      accountName: "Abdulrazaq Sodiq",
+      bankName: "Opay",
+    },
     palmpay: {
-      accountNumber: "1234567890",
-      accountName: "Supreme Data Concept",
+      accountNumber: "8105082299",
+      accountName: "Abdulrazaq Sodiq",
       bankName: "Palmpay",
     },
   };
@@ -86,7 +86,12 @@ const FundWalletTypes = () => {
               <Text className="text-white font-semibold">
                 {bankDetails[activeTab].accountName}
               </Text>
+              
             </Text>
+            <Text className="text-sm text-white mt-2">
+                Transfer to the above account details, send your registered and transfer email to
+                08105082299 Via Whatsapp or SMS
+              </Text>
           </View>
         )}
       </View>

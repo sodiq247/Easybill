@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
+  SafeAreaView
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -12,6 +13,7 @@ import vasServices from "../services/vasServices";
 import FundWalletTypes from "../components/FundWalletTypes";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import accountServices from "../services/auth.services";
 
 const HomeScreen = () => {
   const [transactions, setTransactions] = useState([]);
@@ -20,16 +22,7 @@ const HomeScreen = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const navigation = useNavigation();
 
-  const fetchWalletDetails = async () => {
-    try {
-      const storedWallet = await AsyncStorage.getItem("walletDetails");
-      if (storedWallet) {
-        setWallet(JSON.parse(storedWallet));
-      }
-    } catch (error) {
-      console.error("Error fetching wallet details:", error);
-    }
-  };
+  
 
   const fetchTransactions = async () => {
     try {
@@ -48,10 +41,28 @@ const HomeScreen = () => {
     await fetchTransactions();
     setRefreshing(false);
   };
-
+  
+  // Reusable function to fetch wallet details
+  const fetchWalletDetails = async () => {
+    try {
+      const walletResult = await accountServices.walletBalance();
+      // console.log("Wallet Result:", walletResult);
+      const walletDetails = {
+        balance: walletResult.Wallet?.amount || 0,
+        name: walletResult.Profile?.firstname || "",
+        lastName: walletResult.Profile?.lastname || "",
+      };
+      setWallet(walletDetails); // Set the fetched wallet details
+    } catch (error) {
+      console.error("Error fetching wallet details:", error);
+    }
+  };
   useEffect(() => {
     loadData();
+    // Fetch wallet balance whenever the page is reloaded
+    fetchWalletDetails();
   }, []);
+  
 
   const handleLogout = async () => {
     try {
@@ -63,8 +74,9 @@ const HomeScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
       {/* Sidebar */}
+      {/* <StatusBar translucent/> */}
       <Sidebar isVisible={sidebarVisible} toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout} />
 
       {/* Header */}
@@ -72,7 +84,7 @@ const HomeScreen = () => {
 
       <View className="p-6">
         <Text className=" text-2xl font-semibold text-center">
-           {wallet.name} {wallet.lastname}
+          Hi, {wallet.name} {wallet.lastName}
         </Text>
         <Text className=" text-lg text-center mb-4">
           Balance: ₦{wallet.balance}
@@ -105,7 +117,7 @@ const HomeScreen = () => {
           }
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

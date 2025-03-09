@@ -1,7 +1,8 @@
 import React from "react";
-import "./App.css";
+import { View, TouchableOpacity, Linking } from "react-native";
 import { useFonts } from 'expo-font'; // ✅ Correct import
 import MainNavigator from "./src/navigation/MainNavigator";
+import Icon from 'react-native-vector-icons/FontAwesome'; // Importing FontAwesome icon
 
 const App = () => {
   const [fontsLoaded] = useFonts({  // ✅ Correct function
@@ -12,7 +13,26 @@ const App = () => {
     return null; // Return a loading state until the font loads
   }
 
-  return <MainNavigator />;
+  // WhatsApp number in international format (without +)
+  const whatsappNumber = "+2348105082299"; // Replace with your WhatsApp number
+
+  const handleWhatsAppClick = () => {
+    const url = `whatsapp://send?phone=${whatsappNumber}`;
+    Linking.openURL(url).catch((err) => console.error("Error opening WhatsApp: ", err));
+  };
+
+  return (
+    <>
+      <MainNavigator />
+      
+      {/* WhatsApp Icon */}
+      <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
+        <TouchableOpacity onPress={handleWhatsAppClick}>
+          <Icon name="whatsapp" size={60} color="#25D366" />
+        </TouchableOpacity>
+      </View>
+    </>
+  );
 };
 
 export default App;

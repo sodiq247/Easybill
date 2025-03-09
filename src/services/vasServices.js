@@ -4,7 +4,8 @@ import { Alert, Linking } from "react-native";
 import InAppBrowser from "react-native-inappbrowser-reborn";
 
 let baseUrl = "https://sdc-backend-t3j9.onrender.com/api/v18/vas/";
-// let baseUrl = "http://localhost:5030/api/v1/";
+// let baseUrl = "http://localhost:5030/api/v18/vas/";
+
 
 const getToken = async () => {
   try {
