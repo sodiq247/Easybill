@@ -15,3 +15,6 @@ Refer to the [Final Folder Structure](#final-folder-structure).
    ```bash
    git clone https://github.com/your-repo/billpaymentapp.git
    cd billpaymentapp
+
+## To Build
+eas build --platform android

@@ -16,7 +16,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
 import vasServices from "../services/vasServices";
-import tvPlans from "../Modules/Plans/tvPlans.json";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import accountServices from "../services/auth.services";
@@ -26,6 +25,8 @@ const CableTvScreen = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [selectedTvType, setSelectedTvType] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");
+  const [tvplan, setTvPlan] = useState([]); // Initialize as an array
+  const [filteredPlans, setFilteredPlans] = useState([]); // Store filtered plans
   const [smartCardNumber, setSmartCardNumber] = useState("");
   const [amountToPay, setAmountToPay] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -40,8 +41,9 @@ const CableTvScreen = () => {
   useEffect(() => {
     // Fetch wallet balance whenever the page is reloaded
     fetchWalletDetails();
+    fetchTvPlan();
   }, []);
-  
+
   // Reusable function to fetch wallet details
   const fetchWalletDetails = async () => {
     try {
@@ -58,20 +60,40 @@ const CableTvScreen = () => {
     }
   };
 
+  const fetchTvPlan = async () => {
+    try {
+      const tvPlanResult = await vasServices.getAllTvPlan();
+      console.log("Fetched TV Plans:", tvPlanResult); // Debug fetched plans
+      setTvPlan(tvPlanResult.data || []); // Set the plans or default to an empty array
+    } catch (error) {
+      console.error("Error fetching TV plans:", error.message);
+    }
+  };
+
+  const handleTvTypeChange = (value) => {
+    setSelectedTvType(value);
+    setSelectedPlanId("");
+    setAmountToPay(0);
+
+    // Filter plans based on selected TV type
+    const filtered = (tvplan || []).filter((plan) => plan.type === value);
+    setFilteredPlans(filtered); // Update filtered plans
+    console.log("Filtered Plans:", filtered); // Debug filtered plans
+  };
+
+  const handlePlanChange = (planId) => {
+    const selectedPlan = filteredPlans.find((plan) => plan.plan_id === parseInt(planId));
+    if (selectedPlan) {
+      setSelectedPlanId(planId);
+      setAmountToPay(parseFloat(selectedPlan.amount) + 80); // Add a processing fee
+    }
+  };
+
+  
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchWalletDetails().finally(() => setRefreshing(false));
   }, []);
-
-  const handlePlanChange = (planId) => {
-    const selectedPlan = tvPlans[selectedTvType]?.find(
-      (plan) => plan.id === planId
-    );
-    if (selectedPlan) {
-      setSelectedPlanId(planId);
-      setAmountToPay(parseFloat(selectedPlan.amount) + 80);
-    }
-  };
 
   const mapCablenameToNumber = (cablename) => {
     switch (cablename) {
@@ -100,7 +122,7 @@ const CableTvScreen = () => {
         smart_card_number: smartCardNumber,
       };
       const response = await vasServices.validateIUC(data);
-      const selectedPlans = tvPlans[data.cablename] || [];
+      const selectedPlans = tvplan[data.cablename] || [];
       const plan =
         selectedPlans.find((plan) => plan.id === data.cableplan) || {};
       setPlanTitle(plan.title);
@@ -173,14 +195,16 @@ const CableTvScreen = () => {
   };
 
   return (
-   <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
+    <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
       <Sidebar
         isVisible={sidebarVisible}
-        toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout}
+        toggleSidebar={() => setSidebarVisible(false)}
+        logout={handleLogout}
       />
       <Header
         toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-        reloadData={onRefresh} logout={handleLogout}
+        reloadData={onRefresh}
+        logout={handleLogout}
       />
 
       <ScrollView
@@ -199,35 +223,30 @@ const CableTvScreen = () => {
         <Text className="text-lg text-center mb-4">
           Welcome, {wallet.name} {wallet.lastname}
         </Text>
+        {/* Select TV Provider */}
         <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
-          <Picker
-            selectedValue={selectedTvType}
-            onValueChange={(value) => {
-              setSelectedTvType(value);
-              setSelectedPlanId("");
-              setAmountToPay(0);
-            }}
-          >
-            <Picker.Item label="Select Cable TV" value="" />
-            <Picker.Item label="GOTV" value="GOTV" />
-            <Picker.Item label="DSTV" value="DSTV" />
-            <Picker.Item label="STARTIME" value="STARTIME" />
-          </Picker>
+           <Picker selectedValue={selectedTvType} onValueChange={handleTvTypeChange}>
+          <Picker.Item label="Select Provider" value="" />
+          <Picker.Item label="GOTV" value="GOTV" />
+          <Picker.Item label="DSTV" value="DSTV" />
+          <Picker.Item label="STARTIME" value="STARTIME" />
+        </Picker>
+
         </View>
 
+        {/* Select Plan */}
         {selectedTvType && (
           <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
-            <Picker
-              selectedValue={selectedPlanId}
-              onValueChange={handlePlanChange}
-            >
+           <Picker selectedValue={selectedPlanId} onValueChange={handlePlanChange}>
               <Picker.Item label="Select Plan" value="" />
-              {tvPlans[selectedTvType]?.map((plan) => (
-                <Picker.Item key={plan.id} label={plan.title} value={plan.id} />
+              {filteredPlans.map((plan) => (
+                <Picker.Item key={plan.plan_id} label={`${plan.title} - ₦${plan.amount}`} value={plan.plan_id} />
               ))}
             </Picker>
           </View>
         )}
+
+        {/* Enter Smart Card Number */}
 
         <TextInput
           value={smartCardNumber}

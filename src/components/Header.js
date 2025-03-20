@@ -1,22 +1,28 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import { RefreshCcw, LogOut, Menu } from "lucide-react-native";
+import Icon from "react-native-vector-icons/MaterialIcons"; // Import icons from MaterialIcons
 
 const Header = ({ toggleSidebar, reloadData, logout }) => {
   return (
-    <View className="flex-row items-center justify-between bg-[#14172A] p-5">
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#14172A', padding: 16 }}>
       
-      <Text  style={{ fontFamily: "Lufga" }} className="text-white text-3xl font-semibold">EasyBill</Text>
-      <View className="flex-row gap-5">
+      <Text style={{ fontFamily: 'Lufga', color: 'white', fontSize: 24, fontWeight: '600' }}>EasyBill</Text>
+      
+      <View style={{ flexDirection: 'row', gap: 20 }}>
+        {/* Refresh icon */}
         <TouchableOpacity onPress={reloadData}>
-          <RefreshCcw size={28} color="white" />
+          <Icon name="refresh" size={28} color="white" />
         </TouchableOpacity>
+        
+        {/* Logout icon */}
         <TouchableOpacity onPress={logout}>
-          <LogOut size={28} color="white" />
+          <Icon name="exit-to-app" size={28} color="white" />
         </TouchableOpacity>
+        
+        {/* Menu icon */}
         <TouchableOpacity onPress={toggleSidebar}>
-        <Menu size={28} color="white" />
-      </TouchableOpacity>
+          <Icon name="menu" size={28} color="white" />
+        </TouchableOpacity>
       </View>
     </View>
   );

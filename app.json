@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "BillPaymentApp",
-    "slug": "BillPaymentApp",
+    "slug": "easybill",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,16 +20,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-     "package": "com.sodiq247.BillPaymentApp",
-    "permissions": ["INTERNET"]
+      "package": "com.sodiq247.BillPaymentApp",
+      "permissions": [
+        "INTERNET"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "46c53f9a-df94-4063-99be-978e1c5c3989"
+        "projectId": "02aeac00-5b6c-4d99-b203-7cd308e221b1"
       }
-    }
+    },
+    "owner": "sodiq247"
   }
 }

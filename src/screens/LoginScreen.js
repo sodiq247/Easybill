@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { Eye, EyeOff } from "lucide-react-native";
+import Icon from "react-native-vector-icons/MaterialIcons"; // Import icons from MaterialIcons
 import accountServices from "../services/auth.services";
 
 const LoginScreen = () => {
@@ -91,7 +91,7 @@ const LoginScreen = () => {
       <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
         <Text
           style={{ fontFamily: "Lufga" }}
-          className="font-semibold  text-4xl text-[#14172A] text-center leading-[65.26px]"
+          className="font-semibold text-4xl text-[#14172A] text-center leading-[65.26px]"
         >
           Login
         </Text>
@@ -124,9 +124,9 @@ const LoginScreen = () => {
               onPress={() => setShowPassword((prev) => !prev)}
             >
               {showPassword ? (
-                <EyeOff size={24} color="#14172A" />
+                <Icon name="visibility-off" size={24} color="#14172A" />
               ) : (
-                <Eye size={24} color="#14172A" />
+                <Icon name="visibility" size={24} color="#14172A" />
               )}
             </TouchableOpacity>
           </View>

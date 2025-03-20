@@ -16,7 +16,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
 import vasServices from "../services/vasServices";
-import dataPlans from "../Modules/Plans/dataPlans.json";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import accountServices from "../services/auth.services";
@@ -26,19 +25,22 @@ const DataScreen = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
+  const [dataplan, setDataPlan] = useState([]); // Initialize as an array
+  const [filteredPlans, setFilteredPlans] = useState([]); // Store filtered plans
   const [amountToPay, setAmountToPay] = useState(0);
+  const [mobileNumber, setMobileNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState({});
   const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
   const navigation = useNavigation();
 
- useEffect(() => {
+  useEffect(() => {
     // Fetch wallet balance whenever the page is reloaded
     fetchWalletDetails();
+    fetchDataPlan();
   }, []);
-  
+
   // Reusable function to fetch wallet details
   const fetchWalletDetails = async () => {
     try {
@@ -52,6 +54,17 @@ const DataScreen = () => {
       setWallet(walletDetails); // Set the fetched wallet details
     } catch (error) {
       console.error("Error fetching wallet details:", error);
+    }
+  };
+
+  // Fetch data plans
+  const fetchDataPlan = async () => {
+    try {
+      const dataPlanResult = await vasServices.getAllDataPlan();
+      // console.log("Fetched Data Plans:", dataPlanResult);
+      setDataPlan(dataPlanResult.data); // Save all plans in state
+    } catch (error) {
+      console.error("Error fetching data plans:", error);
     }
   };
 
@@ -69,13 +82,33 @@ const DataScreen = () => {
     fetchWalletDetails().finally(() => setRefreshing(false));
   }, []);
 
+  // Handle network selection
+  const handleNetworkChange = (value) => {
+    setSelectedNetwork(value);
+    setSelectedPlanId("");
+    setAmountToPay(0);
+
+    // Filter plans based on selected network ID
+    const filtered = dataplan.filter(
+      (plan) => plan.network_id === parseInt(value)
+    );
+
+    // console.log("Filtered Plans:", filtered); // Debug filtered plans
+    setFilteredPlans(filtered);
+  };
+
+  // Handle plan selection and update amount
   const handlePlanChange = (planId) => {
-    const selectedPlan = dataPlans[selectedNetwork]?.find(
-      (plan) => plan.id === planId
+    const selectedPlan = filteredPlans.find(
+      (plan) => plan.plan_id === parseInt(planId)
     );
     if (selectedPlan) {
       setSelectedPlanId(planId);
-      setAmountToPay(selectedPlan.amount);
+      setAmountToPay(
+        Math.ceil(
+          parseInt(selectedPlan.amount) + parseInt(selectedPlan.amount) * 0.2
+        ) // Add 20% markup
+      );
     }
   };
 
@@ -158,17 +191,13 @@ const DataScreen = () => {
         <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
           <Picker
             selectedValue={selectedNetwork}
-            onValueChange={(value) => {
-              setSelectedNetwork(value);
-              setSelectedPlanId("");
-              setAmountToPay(0);
-            }}
+            onValueChange={(value) => handleNetworkChange(value)}
           >
             <Picker.Item label="Select Network" value="" />
             <Picker.Item label="MTN" value="1" />
             <Picker.Item label="GLO" value="2" />
-            <Picker.Item label="Airtel" value="3" />
-            <Picker.Item label="9mobile" value="4" />
+            <Picker.Item label="Airtel" value="4" />
+            <Picker.Item label="9mobile" value="3" />
           </Picker>
         </View>
 
@@ -179,13 +208,18 @@ const DataScreen = () => {
               onValueChange={(value) => handlePlanChange(value)}
             >
               <Picker.Item label="Select Plan" value="" />
-              {dataPlans[selectedNetwork]?.map((plan) => (
-                <Picker.Item key={plan.id} label={plan.title} value={plan.id} />
+              {filteredPlans.map((plan) => (
+                <Picker.Item
+                  key={plan.plan_id || Math.random()}
+                  value={plan.plan_id || ""}
+                  label={`${plan.title || "Unknown Plan"} - ₦${Math.ceil(
+                    parseFloat(plan.amount || 0) * 1.2
+                  )}`}
+                />
               ))}
             </Picker>
           </View>
         )}
-
         <TextInput
           value={mobileNumber}
           onChangeText={setMobileNumber}

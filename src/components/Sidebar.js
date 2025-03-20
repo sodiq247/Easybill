@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Phone, Database, Tv, LogOut, Zap, Home, X } from "lucide-react-native";
+// Importing icons from react-native-vector-icons
+import Icon from 'react-native-vector-icons/MaterialIcons'; // You can change to any icon set you like
 
 const Sidebar = ({ isVisible, toggleSidebar, logout }) => {
   const navigation = useNavigation();
@@ -9,38 +10,39 @@ const Sidebar = ({ isVisible, toggleSidebar, logout }) => {
   if (!isVisible) return null;
 
   const services = [
-    { name: "Home", icon: <Home size={24} color="white" /> },
-    { name: "Data", icon: <Database size={24} color="white" /> },
-    { name: "Airtime", icon: <Phone size={24} color="white" /> },
-    { name: "CableTv", icon: <Tv size={24} color="white" /> },
-    { name: "Electricity", icon: <Zap size={24} color="white" /> },
+    { name: "Home", icon: <Icon name="home" size={24} color="white" /> },
+    { name: "Data", icon: <Icon name="storage" size={24} color="white" /> },
+    { name: "Airtime", icon: <Icon name="phone" size={24} color="white" /> },
+    { name: "CableTv", icon: <Icon name="tv" size={24} color="white" /> },
+    { name: "Electricity", icon: <Icon name="flash-on" size={24} color="white" /> },
   ];
 
-
   return (
-    <View className="absolute z-10 left-0 top-0 bottom-0 w-64 bg-[#1F233B] p-6 shadow-lg">
-      <TouchableOpacity onPress={toggleSidebar} className="mb-6 self-end">
-        <X size={28} color="white" />
+    <View style={{ position: 'absolute', zIndex: 10, left: 0, top: 0, bottom: 0, width: 250, backgroundColor: '#1F233B', padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1 }}>
+      <TouchableOpacity onPress={toggleSidebar} style={{ marginBottom: 24, alignSelf: 'flex-end' }}>
+        <Icon name="close" size={28} color="white" />
       </TouchableOpacity>
-      <Text className="text-white mt-[20px] text-2xl font-semibold mb-7">
+      <Text style={{ color: 'white', marginTop: 20, fontSize: 24, fontWeight: '600', marginBottom: 28 }}>
         Menu
       </Text>
       {services.map((service) => (
         <TouchableOpacity
           key={service.name}
-          className="flex-row items-center gap-3 bg-[#14172A] p-4 rounded-lg mb-5"
+          style={{
+            flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#14172A', padding: 16, borderRadius: 8, marginBottom: 20
+          }}
           onPress={() => {
             navigation.navigate(service.name);
             toggleSidebar();
           }}
         >
           {service.icon}
-          <Text className="text-white text-lg font-medium">{service.name}</Text>
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: '500' }}>{service.name}</Text>
         </TouchableOpacity>
       ))}
-      <TouchableOpacity onPress={logout} className=" flex-row gap-3 mt-[100px] bg-[#14172A] p-4 rounded-lg">
-        <LogOut size={28} color="white"  />
-        <Text className="text-white font-semibold text-[18px]">LogOut</Text>
+      <TouchableOpacity onPress={logout} style={{ flexDirection: 'row', gap: 12, marginTop: 100, backgroundColor: '#14172A', padding: 16, borderRadius: 8 }}>
+        <Icon name="logout" size={28} color="white" />
+        <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>LogOut</Text>
       </TouchableOpacity>
     </View>
   );
