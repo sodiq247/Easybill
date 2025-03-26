@@ -44,7 +44,7 @@ export const WalletProvider = ({ children }) => {
       const balance = result.Wallet.amount; // Adjust based on actual response
       const name = result.Profile.firstname;
       const lastname = result.Profile.lastname;
-      console.log("wallet result", result)
+      // console.log("wallet result", result)
       dispatch({ 
         type: SET_BALANCE_AND_NAME, 
         payload: { balance, name, lastname } 

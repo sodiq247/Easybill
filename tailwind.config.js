@@ -8,6 +8,9 @@ module.exports = {
     extend: {
       fontFamily: {
         lufga: ["Lufga"],
+        patriot: ['Patriot'],
+        poppins: ['Poppins'],
+        spaceGrotesk: ["SpaceGrotesk"],
       },
     },
   },

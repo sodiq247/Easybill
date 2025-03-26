@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/MaterialIcons"; // Import icons from
 
 const Header = ({ toggleSidebar, reloadData, logout }) => {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#14172A', padding: 16 }}>
+    <View style={{ flexDirection: 'row', zIndex: 5,  alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#14172A', paddingTop: 40, padding: 16 }}>
       
       <Text style={{ fontFamily: 'Lufga', color: 'white', fontSize: 24, fontWeight: '600' }}>EasyBill</Text>
       

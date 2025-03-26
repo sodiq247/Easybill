@@ -7,7 +7,9 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Importing FontAweso
 const App = () => {
   const [fontsLoaded] = useFonts({  // ✅ Correct function
     Lufga: require('./assets/font/LufgaRegular.ttf'),
+    SpaceGrotesk: require('./assets/font/Space-Grotesk.ttf'),
   });
+  
 
   if (!fontsLoaded) {
     return null; // Return a loading state until the font loads

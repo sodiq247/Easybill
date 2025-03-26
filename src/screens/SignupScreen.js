@@ -61,7 +61,7 @@ const SignupScreen = () => {
 
     try {
       const result = await accountServices.signup(data);
-      console.log("result", result);
+      // console.log("result", result);
       if (result.message === "SUCCESSFUL") {
         Alert.alert(result.body);
         setTimeout(() => {
@@ -85,15 +85,17 @@ const SignupScreen = () => {
       className="flex-1 p-5 justify-center items-center"
     >
       <View className="w-full mt-4 max-w-sm bg-white p-6 rounded-lg shadow-md">
-        <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
-          <Image 
-            source={require("../../assets/icon.png")}
-            className="flex-1 p-5 justify-center items-center w-5 h-5"
-          />
+        <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")} className="flex flex-row gap-1">
+          {/* <Image 
+            source={require("../../assets/arrow-right.png")}
+            className="flex-1 p-5 justify-center items-center w-2 h-2"
+          /> */}
           <Text className="w-full my-4 flex gap-1 text-gray-500 text-left">
-            Back to{" "}
-            <Text className="underline ml-1 text-[#14172A] font-semibold">
-              Login
+            Go to{" "}
+            <Text
+            style={{ fontFamily: "SpaceGrotesk" }}
+            className="underline ml-1 text-[#14172A] font-bold">
+            Login
             </Text>
           </Text>
         </TouchableOpacity>
@@ -196,7 +198,9 @@ const SignupScreen = () => {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="text-white font-semibold">SignUp</Text>
+            <Text
+            style={{ fontFamily: "SpaceGrotesk" }}
+            className="text-white font-semibold">SignUp</Text>
           )}
         </TouchableOpacity>
       </View>

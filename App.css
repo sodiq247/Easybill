@@ -7,10 +7,16 @@
     src: url('/src//Assets/font/LufgaRegular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-  },
+  }
   @font-face {
     font-family: 'Patriot';
     src: url('/src//Assets/font/Patriot-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'SpaceGrotesk';
+    src: url('/src//Assets/font/Space-Grotesk.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
   }

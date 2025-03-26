@@ -100,7 +100,7 @@ const vasServices = {
     }
   },
   creditWallet: async (amount) => {
-    console.log("Sending amount to fund wallet:", amount);
+    // console.log("Sending amount to fund wallet:", amount);
     const token = await getToken();
     let response = await axios.post(
       `${baseUrl}fundWallet`,
@@ -141,7 +141,12 @@ const vasServices = {
     }
   },
   getTransaction: async () => {
-    let response = await axios.get(`${baseUrl}getTransactions`);
+    const token = await getToken();
+    let response = await axios.get(`${baseUrl}getTransactions`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+  });
+  // console.log("getTransaction", response.data )
     return response;
   },
 };

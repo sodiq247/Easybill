@@ -35,7 +35,7 @@ const AirtimeScreen = () => {
     // Fetch wallet balance whenever the page is reloaded
     fetchWalletDetails();
   }, []);
-  
+
   // Reusable function to fetch wallet details
   const fetchWalletDetails = async () => {
     try {
@@ -57,9 +57,19 @@ const AirtimeScreen = () => {
     fetchWalletDetails().finally(() => setRefreshing(false));
   }, []);
 
+  // Validate and sanitize amount input
+  const handleAmountChange = (value) => {
+    const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+    setAmount(sanitizedValue);
+  };
+
   const handlePurchase = async () => {
     if (!selectedNetwork || !amount || !mobileNumber) {
       Alert.alert("Error", "Please fill all fields.");
+      return;
+    }
+    if (parseInt(amount) <= 0) {
+      Alert.alert("Error", "Please enter a valid positive amount.");
       return;
     }
     setLoading(true);
@@ -76,7 +86,7 @@ const AirtimeScreen = () => {
     } else {
       try {
         const response = await vasServices.airTime(data);
-        console.log("response", response);
+        // console.log("response", response);
         if (
           response &&
           response.data.result &&
@@ -87,10 +97,10 @@ const AirtimeScreen = () => {
         } else {
           const errorMessage =
             response?.data?.result?.error?.[0] || "Transaction unsuccessful";
-            console.log("Error", errorMessage);
-            Alert.alert("Transaction unsuccessful");
-            navigation.replace("AirtimeScreen");
-            setShowModal(false);
+          console.log("Error", errorMessage);
+          Alert.alert("Transaction unsuccessful");
+          navigation.replace("AirtimeScreen");
+          setShowModal(false);
         }
       } catch (error) {
         Alert.alert("Error", "Transaction failed.");
@@ -109,18 +119,20 @@ const AirtimeScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
-     <Sidebar
+    <SafeAreaView className="flex-1 h-screen bg-gray-100 ">
+      <Sidebar
         isVisible={sidebarVisible}
-        toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout}
+        toggleSidebar={() => setSidebarVisible(false)}
+        logout={handleLogout}
       />
       <Header
         toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-        reloadData={onRefresh} logout={handleLogout}
+        reloadData={onRefresh}
+        logout={handleLogout}
       />
 
       <ScrollView
-        className="p-6 bg-red-100 flex-1"
+        className="p-6 bg-gray-100 flex-1"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -157,7 +169,7 @@ const AirtimeScreen = () => {
         />
         <TextInput
           value={amount}
-          onChangeText={setAmount}
+          onChangeText={handleAmountChange} // Validate amount here
           placeholder="Enter Amount"
           keyboardType="numeric"
           className="p-4 mb-6 border border-gray-300 rounded-lg bg-white shadow-md"
@@ -179,12 +191,19 @@ const AirtimeScreen = () => {
           animationType="slide"
           onRequestClose={() => setShowModal(false)}
         >
-          <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <View className="w-80 p-6 bg-white rounded-lg shadow-lg">
               <Text className="text-lg font-bold mb-4">
                 Transaction Details
               </Text>
-              <Text>Network: {selectedNetwork}</Text>
+              {/* <Text>Network: {selectedNetwork}</Text> */}
               <Text>Mobile Number: {mobileNumber}</Text>
               <Text>Amount: ₦{amount}</Text>
               <TouchableOpacity

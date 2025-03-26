@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  ImageBackground,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -58,10 +59,12 @@ const LoginScreen = () => {
 
         try {
           const walletResult = await accountServices.walletBalance();
+          // console.log("walletResult", walletResult)
           const walletDetails = {
             balance: walletResult.Wallet?.amount || 0,
             name: walletResult.Profile?.firstname || "",
             lastname: walletResult.Profile?.lastname || "",
+            email: walletResult.Profile?.email || "",
           };
           await saveWalletDetails(walletDetails);
 
@@ -87,7 +90,10 @@ const LoginScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-[#14172A] p-5 justify-center items-center">
+    <ImageBackground
+      source={require("../../assets/login-bg.png")}
+      className="flex-1 p-5 justify-center items-center"
+    >
       <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
         <Text
           style={{ fontFamily: "Lufga" }}
@@ -139,7 +145,12 @@ const LoginScreen = () => {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="text-white font-semibold">Login</Text>
+            <Text
+              style={{ fontFamily: "SpaceGrotesk" }}
+              className="text-white font-semibold"
+            >
+              Login
+            </Text>
           )}
         </TouchableOpacity>
 
@@ -147,24 +158,30 @@ const LoginScreen = () => {
           <TouchableOpacity
             onPress={() => navigation.navigate("ForgotPasswordScreen")}
           >
-            <Text className="font-semibold text--[#14172A] underline">
+            <Text 
+            style={{ fontFamily: "SpaceGrotesk" }}
+            
+            className="font-semibold text--[#14172A] underline">
               Forgot Password
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
             <Text className="text-[#14172A]">
               Don’t have an account?{" "}
-              <Text className="font-semibold text--[#14172A] underline">
+              <Text 
+            style={{ fontFamily: "SpaceGrotesk" }}
+              
+              className="font-semibold text--[#14172A] underline">
                 Sign Up
               </Text>
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-      <Text className="text-white text-xs mt-6">
+      <Text className="text-gray-600 text-xs mt-6">
         © Copyright Easybill 2025. All Rights Reserved.
       </Text>
-    </View>
+    </ImageBackground>
   );
 };
 

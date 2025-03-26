@@ -135,7 +135,7 @@ const ElectricityScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
+    <SafeAreaView className="flex-1 h-screen bg-gray-100 ">
       <Sidebar
         isVisible={sidebarVisible}
         toggleSidebar={() => setSidebarVisible(false)}
@@ -148,7 +148,7 @@ const ElectricityScreen = () => {
       />
 
       <ScrollView
-        className="p-6 bg-red-100 flex-1"
+        className="p-6 bg-gray-100 flex-1"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -234,16 +234,23 @@ const ElectricityScreen = () => {
           animationType="slide"
           onRequestClose={() => setShowModal(false)}
         >
-          <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <View className="w-80 p-6 bg-white rounded-lg shadow-lg">
               <Text className="text-lg font-bold mb-4">
                 Transaction Details
               </Text>
-              <Text>Disco: {transactionDetails.disconame}</Text>
-              <Text>Meter Number: {transactionDetails.meternumber}</Text>
-              <Text>Amount: ₦{amountToPay}</Text>
+              {/* <Text>Disco: {transactionDetails.disconame}</Text> */}
+              {/* <Text>Meter Number: {transactionDetails.meternumber}</Text> */}
               <Text>Name: {transactionDetails.name}</Text>
               <Text>Address: {transactionDetails.address}</Text>
+              <Text>Amount: ₦{amountToPay}</Text>
               {/* <TouchableOpacity
                 className="mt-4 px-4 py-2 bg-[#1F233B] rounded-lg"
                 onPress={handlePurchase}

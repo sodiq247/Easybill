@@ -63,7 +63,7 @@ const CableTvScreen = () => {
   const fetchTvPlan = async () => {
     try {
       const tvPlanResult = await vasServices.getAllTvPlan();
-      console.log("Fetched TV Plans:", tvPlanResult); // Debug fetched plans
+      // console.log("Fetched TV Plans:", tvPlanResult); // Debug fetched plans
       setTvPlan(tvPlanResult.data || []); // Set the plans or default to an empty array
     } catch (error) {
       console.error("Error fetching TV plans:", error.message);
@@ -78,18 +78,19 @@ const CableTvScreen = () => {
     // Filter plans based on selected TV type
     const filtered = (tvplan || []).filter((plan) => plan.type === value);
     setFilteredPlans(filtered); // Update filtered plans
-    console.log("Filtered Plans:", filtered); // Debug filtered plans
+    // console.log("Filtered Plans:", filtered); // Debug filtered plans
   };
 
   const handlePlanChange = (planId) => {
-    const selectedPlan = filteredPlans.find((plan) => plan.plan_id === parseInt(planId));
+    const selectedPlan = filteredPlans.find(
+      (plan) => plan.plan_id === parseInt(planId)
+    );
     if (selectedPlan) {
       setSelectedPlanId(planId);
       setAmountToPay(parseFloat(selectedPlan.amount) + 80); // Add a processing fee
     }
   };
 
-  
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchWalletDetails().finally(() => setRefreshing(false));
@@ -195,7 +196,7 @@ const CableTvScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 h-screen bg-red-100 mt-[40px]">
+    <SafeAreaView className="flex-1 h-screen bg-gray-100 ">
       <Sidebar
         isVisible={sidebarVisible}
         toggleSidebar={() => setSidebarVisible(false)}
@@ -208,7 +209,7 @@ const CableTvScreen = () => {
       />
 
       <ScrollView
-        className="p-6 bg-red-100 flex-1"
+        className="p-6 bg-gray-100 flex-1"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -225,22 +226,31 @@ const CableTvScreen = () => {
         </Text>
         {/* Select TV Provider */}
         <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
-           <Picker selectedValue={selectedTvType} onValueChange={handleTvTypeChange}>
-          <Picker.Item label="Select Provider" value="" />
-          <Picker.Item label="GOTV" value="GOTV" />
-          <Picker.Item label="DSTV" value="DSTV" />
-          <Picker.Item label="STARTIME" value="STARTIME" />
-        </Picker>
-
+          <Picker
+            selectedValue={selectedTvType}
+            onValueChange={handleTvTypeChange}
+          >
+            <Picker.Item label="Select Provider" value="" />
+            <Picker.Item label="GOTV" value="GOTV" />
+            <Picker.Item label="DSTV" value="DSTV" />
+            <Picker.Item label="STARTIME" value="STARTIME" />
+          </Picker>
         </View>
 
         {/* Select Plan */}
         {selectedTvType && (
           <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
-           <Picker selectedValue={selectedPlanId} onValueChange={handlePlanChange}>
+            <Picker
+              selectedValue={selectedPlanId}
+              onValueChange={handlePlanChange}
+            >
               <Picker.Item label="Select Plan" value="" />
               {filteredPlans.map((plan) => (
-                <Picker.Item key={plan.plan_id} label={`${plan.title} - ₦${plan.amount}`} value={plan.plan_id} />
+                <Picker.Item
+                  key={plan.plan_id}
+                  label={`${plan.title} - ₦${plan.amount}`}
+                  value={plan.plan_id}
+                />
               ))}
             </Picker>
           </View>
@@ -276,15 +286,22 @@ const CableTvScreen = () => {
           animationType="slide"
           onRequestClose={() => setShowModal(false)}
         >
-          <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <View className="w-80 p-6 bg-white rounded-lg shadow-lg">
               <Text className="text-lg font-bold mb-4">
                 Transaction Details
               </Text>
               <Text>TV Provider: {selectedTvType}</Text>
-              <Text>Plan: {planTitle}</Text>
-              <Text>IUC Number: {smartCardNumber}</Text>
+              {/* <Text>Plan: {planTitle}</Text> */}
               <Text>IUC Name: {iucName}</Text>
+              <Text>IUC Number: {smartCardNumber}</Text>
               <Text>Amount: ₦{amountToPay}</Text>
 
               <TouchableOpacity
