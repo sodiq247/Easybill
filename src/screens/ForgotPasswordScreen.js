@@ -47,7 +47,7 @@ const LoginScreen = () => {
   return (
     <ImageBackground
           source={require("../../assets/login-bg.png")}
-    className="flex-1 flex-col  bg-[#14172A] p-5 pb-0 justify-between items-center">
+    className="flex-1 flex-col  bg-[#14172A] p-5 pt-0 pb-0 justify-between items-center">
       <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md mt-[50%]">
         <Text
           style={{ fontFamily: "Lufga" }}

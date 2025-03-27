@@ -19,7 +19,7 @@ const Sidebar = ({ isVisible, toggleSidebar, logout }) => {
   ];
 
   return (
-    <View style={{ position: 'absolute', zIndex: 10, left: 0, top: 0, bottom: 0, width: 250, backgroundColor: '#14172A', paddingTop: 40, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1 }}>
+    <View style={{ position: 'absolute', zIndex: 10, left: 0, top: 0, bottom: 0, width: 250, backgroundColor: '#14172A', paddingTop: 0, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1 }}>
       <TouchableOpacity onPress={toggleSidebar} style={{ marginBottom: 24, marginTop: 0, alignSelf: 'flex-end' }}>
         <Icon name="close" size={28} color="white" />
       </TouchableOpacity>

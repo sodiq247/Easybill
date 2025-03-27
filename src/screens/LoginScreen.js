@@ -93,7 +93,7 @@ const LoginScreen = () => {
   return (
     <ImageBackground
       source={require("../../assets/login-bg.png")}
-      className="flex-1 p-5 pb-0 justify-between items-center"
+      className="flex-1 p-5 pt-0 pb-0 justify-between items-center"
     >
       <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md mt-[48%]">
         <Text
@@ -116,7 +116,7 @@ const LoginScreen = () => {
         />
 
         <View className="relative mt-4">
-          <View className="px-3 w-full flex-row items-center border border-gray-300 rounded-lg bg-white shadow-md">
+          <View className="p-3 w-full flex-row items-center border border-gray-300 rounded-lg bg-white shadow-md">
             <TextInput
               className="flex-1 bg-white"
               placeholder="Password"

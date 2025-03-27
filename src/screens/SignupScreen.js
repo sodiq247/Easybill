@@ -83,7 +83,7 @@ const SignupScreen = () => {
   return (
     <ImageBackground 
       source={require("../../assets/icon.png")}
-      className="flex-1 p-5 pb-0 justify-between items-center"
+      className="flex-1 p-5 pt-0 pb-0 justify-between items-center"
     >
       <View className="w-full mt-[20%] max-w-sm bg-white p-6 rounded-lg shadow-md">
         <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")} className="flex flex-row gap-1">

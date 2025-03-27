@@ -10,7 +10,9 @@ const Header = ({ toggleSidebar, reloadData, logout }) => {
         zIndex: 5,
         alignItems: "center",
         justifyContent: "space-between",
-        paddingTop: 40,
+        paddingTop: 0,
+        paddingBottom: 10,
+        backgroundColor: "white",
         padding: 16,
         borderBottomWidth: 1, // Border at the bottom
         borderBottomColor: "#ccc",
