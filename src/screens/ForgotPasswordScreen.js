@@ -5,9 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ImageBackground,
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Footer from "../components/Footer";
 import accountServices from "../services/auth.services";
 
 const LoginScreen = () => {
@@ -43,8 +45,10 @@ const LoginScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-[#14172A] p-5 justify-center items-center">
-      <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+    <ImageBackground
+          source={require("../../assets/login-bg.png")}
+    className="flex-1 flex-col  bg-[#14172A] p-5 pb-0 justify-between items-center">
+      <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md mt-[50%]">
         <Text
           style={{ fontFamily: "Lufga" }}
           className="font-semibold  text-3xl text-[#14172A] text-center leading-[65.26px]"
@@ -72,7 +76,9 @@ const LoginScreen = () => {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="text-white font-semibold">Send Link</Text>
+            <Text
+            style={{ fontFamily: "SpaceGrotesk" }}
+            className="text-white font-semibold">Send Link</Text>
           )}
         </TouchableOpacity>
 
@@ -80,18 +86,18 @@ const LoginScreen = () => {
           <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
                    {/* <img src={BackIcon} alt="back-icon" /> */}
                    <Text className="w-full my-4 flex gap-1 text-gray-500 text-left">
-                     Back to{" "}
-                     <Text className="underline ml-1 text-[#14172A] font-semibold">
+                     Go to{" "}
+                     <Text 
+                     style={{ fontFamily: "SpaceGrotesk" }}
+                     className="underline ml-1 text-[#14172A] font-semibold">
                        Login
                      </Text>
                    </Text>
                  </TouchableOpacity>
         </View>
       </View>
-      <Text className="text-white text-xs mt-6">
-        © Copyright *Company* 2025. All Rights Reserved.
-      </Text>
-    </View>
+      <Footer />
+    </ImageBackground>
   );
 };
 

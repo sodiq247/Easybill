@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import icons from MaterialIcons
 import accountServices from "../services/auth.services";
+import Footer from "../components/Footer";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -92,9 +93,9 @@ const LoginScreen = () => {
   return (
     <ImageBackground
       source={require("../../assets/login-bg.png")}
-      className="flex-1 p-5 justify-center items-center"
+      className="flex-1 p-5 pb-0 justify-between items-center"
     >
-      <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+      <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md mt-[48%]">
         <Text
           style={{ fontFamily: "Lufga" }}
           className="font-semibold text-4xl text-[#14172A] text-center leading-[65.26px]"
@@ -107,7 +108,7 @@ const LoginScreen = () => {
 
         <TextInput
           style={{ fontFamily: "Lufga" }}
-          className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
+          className="p-3 w-full border border-gray-300 rounded-lg bg-white shadow-md"
           placeholder="Email Address"
           value={email}
           onChangeText={setEmail}
@@ -115,9 +116,9 @@ const LoginScreen = () => {
         />
 
         <View className="relative mt-4">
-          <View className="flex-row items-center border border-gray-300 rounded-lg bg-gray-50">
+          <View className="px-3 w-full flex-row items-center border border-gray-300 rounded-lg bg-white shadow-md">
             <TextInput
-              className="flex-1 p-3"
+              className="flex-1 bg-white"
               placeholder="Password"
               value={password}
               secureTextEntry={!showPassword}
@@ -126,7 +127,7 @@ const LoginScreen = () => {
               autoCorrect={false}
             />
             <TouchableOpacity
-              className="p-3"
+              className=""
               onPress={() => setShowPassword((prev) => !prev)}
             >
               {showPassword ? (
@@ -158,29 +159,27 @@ const LoginScreen = () => {
           <TouchableOpacity
             onPress={() => navigation.navigate("ForgotPasswordScreen")}
           >
-            <Text 
-            style={{ fontFamily: "SpaceGrotesk" }}
-            
-            className="font-semibold text--[#14172A] underline">
+            <Text
+              style={{ fontFamily: "SpaceGrotesk" }}
+              className="font-semibold text--[#14172A] underline"
+            >
               Forgot Password
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
             <Text className="text-[#14172A]">
               Don’t have an account?{" "}
-              <Text 
-            style={{ fontFamily: "SpaceGrotesk" }}
-              
-              className="font-semibold text--[#14172A] underline">
+              <Text
+                style={{ fontFamily: "SpaceGrotesk" }}
+                className="font-semibold text--[#14172A] underline"
+              >
                 Sign Up
               </Text>
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-      <Text className="text-gray-600 text-xs mt-6">
-        © Copyright Easybill 2025. All Rights Reserved.
-      </Text>
+      <Footer />
     </ImageBackground>
   );
 };

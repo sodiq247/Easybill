@@ -15,6 +15,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import accountServices from "../services/auth.services";
+import Footer from "../components/Footer";
 
 const HomeScreen = () => {
   const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
@@ -48,12 +49,32 @@ const HomeScreen = () => {
   }, []);
 
   const services = [
-    { name: "Data", icon: "storage", description: "Buy affordable data plans." },
+    {
+      name: "Data",
+      icon: "storage",
+      description: "Buy affordable data plans.",
+    },
     { name: "Airtime", icon: "phone", description: "Purchase airtime easily." },
-    { name: "Cable TV", icon: "tv", description: "Renew your Cable TV subscription." },
-    { name: "Electricity", icon: "flash-on", description: "Pay electricity bills." },
-    { name: "History", icon: "history", description: "View your transaction logs." },
-    { name: "Fund Wallet", icon: "account-balance-wallet", description: "Add money to your wallet." },
+    {
+      name: "CableTv",
+      icon: "tv",
+      description: "Renew your Cable TV subscription.",
+    },
+    {
+      name: "Electricity",
+      icon: "flash-on",
+      description: "Pay electricity bills.",
+    },
+    {
+      name: "History",
+      icon: "history",
+      description: "View your transaction logs.",
+    },
+    {
+      name: "Fund Wallet",
+      icon: "account-balance-wallet",
+      description: "Add money to your wallet.",
+    },
   ];
 
   return (
@@ -110,11 +131,19 @@ const HomeScreen = () => {
               }}
             >
               <View className="flex flex-row gap-1">
-
-              <Icon name={service.icon} size={32} color="#1F233B" className="mb-2" />
-              <Text className="text-lg font-bold text-gray-800">{service.name}</Text>
+                <Icon
+                  name={service.icon}
+                  size={28}
+                  color="#1F233B"
+                  className="mb-2"
+                />
+                <Text className="text-lg font-bold text-gray-800">
+                  {service.name}
+                </Text>
               </View>
-              <Text className="text-sm text-gray-500 mt-1">{service.description}</Text>
+              <Text className="text-sm text-gray-500 mt-1">
+                {service.description}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -143,11 +172,14 @@ const HomeScreen = () => {
               className="bg-gray-300 rounded-lg py-2 w-[90%] mx-[5%] mt-0"
               onPress={() => setShowFundWalletModal(false)}
             >
-              <Text className="text-black font-semibold text-center">Cancel</Text>
+              <Text className="text-black font-semibold text-center">
+                Cancel
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
+      <Footer />
     </SafeAreaView>
   );
 };

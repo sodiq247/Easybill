@@ -18,6 +18,7 @@ import CustomButton from "../components/CustomButton";
 import vasServices from "../services/vasServices";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import accountServices from "../services/auth.services";
 
 const CableTvScreen = () => {
@@ -328,6 +329,7 @@ const CableTvScreen = () => {
         />
       )} */}
       </ScrollView>
+      <Footer />
     </SafeAreaView>
   );
 };

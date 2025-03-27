@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import FundWalletTypes from "../components/FundWalletTypes";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import accountServices from "../services/auth.services";
 import vasServices from "../services/vasServices"; // Assuming vasServices is already set up
 
@@ -43,6 +44,7 @@ const HomeScreen = () => {
     try {
       const response = await vasServices.getTransaction();
       setTransactions(response.data.data || []);
+      // console.log( "fetchTransactions", response.data.data)
     } catch (err) {
       setError("An error occurred while fetching transactions");
     } finally {
@@ -78,13 +80,13 @@ const HomeScreen = () => {
     }
   };
 
-  const filteredTransactions = transactions
-    .filter((transaction) =>
-      filterDate
-        ? new Date(transaction.createdAt).toLocaleDateString() === filterDate
-        : true
-    )
-    .slice(0, 10); // Limit to the last 10 transactions
+  // const filteredTransactions = transactions
+    // .filter((transaction) =>
+    //   filterDate
+    //     ? new Date(transaction.createdAt).toLocaleDateString() === filterDate
+    //     : true
+    // )
+    // .slice(0, 10); // Limit to the last 10 transactions
 
   const renderItem = ({ item, index }) => {
     return (
@@ -124,7 +126,7 @@ const HomeScreen = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100 pt-10">
+    <SafeAreaView className="flex-1 flex-col gap-1 bg-gray-100 pt-0">
       {/* Sidebar */}
       <Sidebar
         isVisible={sidebarVisible}
@@ -158,7 +160,8 @@ const HomeScreen = () => {
         {/* Use FlatList to handle scrolling and list rendering */}
         <Text className="text-lg font-bold text-center mb-2">Recent Transactions</Text>
         <FlatList
-          data={filteredTransactions}
+        className="mb-5 h-[70%]"
+          data={transactions}
           keyExtractor={(item, index) =>
             item.transaction_ref || index.toString()
           }
@@ -171,6 +174,7 @@ const HomeScreen = () => {
           }
         />
         
+      <Footer />
       </View>
     </SafeAreaView>
   );
