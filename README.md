@@ -16,5 +16,8 @@ Refer to the [Final Folder Structure](#final-folder-structure).
    git clone https://github.com/your-repo/billpaymentapp.git
    cd billpaymentapp
 
+## To Run
+npx expo start
+
 ## To Build
 eas build --platform android

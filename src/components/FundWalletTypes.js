@@ -52,12 +52,16 @@ const FundWalletTypes = () => {
     }
   };
 
- // Handle validation to allow only valid positive numbers
-   const handleAmountChange = (value) => {
-     const sanitizedValue = value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-     setAmount(sanitizedValue);
-   };
- 
+  const handleAmountChange = (e) => {
+    // Get the current input value
+    const value = e.target.value;
+  
+    // Only allow numeric characters (digits 0-9)
+    const numericValue = value.replace(/[^0-9]/g, "");
+  
+    // Update the state with the sanitized value
+    setAmount(numericValue);
+  };
    // Handle proceed button
    const handleProceed = () => {
      if (!amount || parseInt(amount) <= 0) {
