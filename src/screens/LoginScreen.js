@@ -14,7 +14,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import icons from MaterialIcons
-import accountServices from "../services/auth.services";
+import accountServices from "../services/auth.serv";
 import Footer from "../components/Footer";
 
 const LoginScreen = () => {
@@ -92,7 +92,7 @@ const LoginScreen = () => {
 
   return (
     <ImageBackground
-      source={require("../../assets/login-bg.png")}
+      // source={require("../../assets/login-bg.png")}
       className="flex-1 p-5 pt-0 pb-0 justify-between items-center"
     >
       <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md mt-[48%]">

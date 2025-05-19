@@ -15,11 +15,11 @@ import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native"; // Import for navigation
 import CustomButton from "../components/CustomButton";
-import vasServices from "../services/vasServices";
+import vasServices from "../services/vasServi";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import accountServices from "../services/auth.services";
+import accountServices from "../services/auth.serv";
 
 const ElectricityScreen = () => {
   const [refreshing, setRefreshing] = useState(false);

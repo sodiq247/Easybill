@@ -9,7 +9,7 @@ import {
   Linking,
   Alert,
 } from "react-native";
-import PaywithPaystack from "./PaywithPaystack";
+import PaywithPaystack from "./PaywithPaysta";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FundWalletTypes = () => {
