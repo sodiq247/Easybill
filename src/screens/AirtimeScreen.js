@@ -15,11 +15,11 @@ import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import CustomButton from "../components/CustomButton";
-import vasServices from "../services/vasServi";
+import vasServices from "../services/vasServices";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import accountServices from "../services/auth.serv";
+import accountServices from "../services/auth.services";
 
 const AirtimeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);

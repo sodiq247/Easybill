@@ -5,14 +5,25 @@ let baseUrl = "https://sdc-backend-t3j9.onrender.com/api/v18/vas/";
 // let baseUrl = "http://localhost:5030/api/v18/vas/";
 
 
+// const getToken = async () => {
+//   try {
+//     return await AsyncStorage.getItem("access_token");
+//   } catch (error) {
+//     console.error("Error fetching token from storage:", error);
+//     return null;
+//   }
+// };
+
+// Function to get token from AsyncStorage
 const getToken = async () => {
   try {
-    return await AsyncStorage.getItem("access_token");
+    const token = await AsyncStorage.getItem("access_token")
+    return token ? token.trim() : null
   } catch (error) {
-    console.error("Error fetching token from storage:", error);
-    return null;
+    console.error("Error fetching token from storage:", error)
+    return null
   }
-};
+}
 
 const vasServices = {
   getTransaction: async () => {
@@ -39,6 +50,34 @@ const vasServices = {
       return null;
     }
   },
+
+   // Get all data plans for a specific network
+   allDataPlans: async (networkId) => {
+    try {
+      const token = await getToken()
+
+      if (!token) {
+        throw new Error("Authentication token not found")
+      }
+
+      // For GET requests, params should be used for query parameters
+      const response = await axios.get(`${baseUrl}allDataPlans`, {
+        params: networkId,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+
+        },
+      })
+      // console.log("getAllDataPlans api response", response)
+      return response.data
+    } catch (error) {
+      console.error("Error fetching data plans:", error)
+      throw error
+    }
+  },
+
   dataBundle: async (data) => {
     try {
       const token = await getToken();

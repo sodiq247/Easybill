@@ -14,7 +14,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import icons from MaterialIcons
-import accountServices from "../services/auth.serv";
+import accountServices from "../services/auth.services";
 import Footer from "../components/Footer";
 
 const LoginScreen = () => {

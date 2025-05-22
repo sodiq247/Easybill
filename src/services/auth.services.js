@@ -47,7 +47,7 @@ const accountServices = {
   login: async (data) => {
     try {
       const response = await axios.post(`${baseUrl}account/token`, data);
-
+      // console.log("response", response);
       // Store token after successful login
       if (response.data.access_token) {
         await setToken(response.data.access_token);
@@ -144,7 +144,7 @@ const accountServices = {
       return response.data;
     } catch (error) {
       console.error("Error fetching wallet balance:", error.response || error);
-      // Alert.alert("Error", "Unable to fetch wallet balance.");
+      Alert.alert("Error", "Unable to fetch wallet balance.");
       return null;
     }
   },

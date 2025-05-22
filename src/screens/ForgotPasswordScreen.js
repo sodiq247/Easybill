@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Footer from "../components/Footer";
-import accountServices from "../services/auth.serv";
+import accountServices from "../services/auth.services";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -46,8 +46,9 @@ const LoginScreen = () => {
 
   return (
     <ImageBackground
-          // source={require("../../assets/login-bg.png")}
-    className="flex-1 flex-col  bg-[#14172A] p-5 pt-0 pb-0 justify-between items-center">
+      source={require("../../assets/login-bg.png")}
+      className="flex-1 flex-col  bg-[#14172A] p-5 pt-0 pb-0 justify-between items-center"
+    >
       <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md mt-[50%]">
         <Text
           style={{ fontFamily: "Lufga" }}
@@ -56,7 +57,7 @@ const LoginScreen = () => {
           Forgot Password
         </Text>
         <Text className="text-gray-600 text-center mb-6">
-        A link will be sent to you’re email to help reset your password.
+          A link will be sent to you’re email to help reset your password.
         </Text>
 
         <TextInput
@@ -77,23 +78,27 @@ const LoginScreen = () => {
             <ActivityIndicator color="#fff" />
           ) : (
             <Text
-            style={{ fontFamily: "SpaceGrotesk" }}
-            className="text-white font-semibold">Send Link</Text>
+              style={{ fontFamily: "SpaceGrotesk" }}
+              className="text-white font-semibold"
+            >
+              Send Link
+            </Text>
           )}
         </TouchableOpacity>
 
         <View className="flex flex-col justify-between mt-4 font-spaceGrotesk">
           <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
-                   {/* <img src={BackIcon} alt="back-icon" /> */}
-                   <Text className="w-full my-4 flex gap-1 text-gray-500 text-left">
-                     Go to{" "}
-                     <Text 
-                     style={{ fontFamily: "SpaceGrotesk" }}
-                     className="underline ml-1 text-[#14172A] font-semibold">
-                       Login
-                     </Text>
-                   </Text>
-                 </TouchableOpacity>
+            {/* <img src={BackIcon} alt="back-icon" /> */}
+            <Text className="w-full my-4 flex gap-1 text-gray-500 text-left">
+              Go to{" "}
+              <Text
+                style={{ fontFamily: "SpaceGrotesk" }}
+                className="underline ml-1 text-[#14172A] font-semibold"
+              >
+                Login
+              </Text>
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
       <Footer />

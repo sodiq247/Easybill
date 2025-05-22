@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Import MaterialIcons for visibility icons
-import accountServices from "../services/auth.serv";
+import accountServices from "../services/auth.services";
 import Footer from "../components/Footer";
 
 const SignupScreen = () => {
@@ -82,7 +82,7 @@ const SignupScreen = () => {
 
   return (
     <ImageBackground 
-      // source={require("../../assets/icon.png")}
+      source={require("../../assets/icon.png")}
       className="flex-1 p-5 pt-0 pb-0 justify-between items-center"
     >
       <View className="w-full mt-[20%] max-w-sm bg-white p-6 rounded-lg shadow-md">

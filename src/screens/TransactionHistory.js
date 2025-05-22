@@ -13,8 +13,8 @@ import FundWalletTypes from "../components/FundWalletTypes";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import accountServices from "../services/auth.serv";
-import vasServices from "../services/vasServi"; // Assuming vasServices is already set up
+import accountServices from "../services/auth.services";
+import vasServices from "../services/vasServices"; // Assuming vasServices is already set up
 
 const HomeScreen = () => {
   const [transactions, setTransactions] = useState([]);

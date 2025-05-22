@@ -14,7 +14,7 @@ import FundWalletTypes from "../components/FundWalletTypes";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import accountServices from "../services/auth.serv";
+import accountServices from "../services/auth.services";
 import Footer from "../components/Footer";
 
 const HomeScreen = () => {

@@ -7,8 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
   Modal,
+  SafeAreaView,
   RefreshControl,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
@@ -21,28 +21,25 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import accountServices from "../services/auth.services";
 
-const CableTvScreen = () => {
+const DataScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [selectedTvType, setSelectedTvType] = useState("");
+  const [selectedNetwork, setSelectedNetwork] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");
-  const [tvplan, setTvPlan] = useState([]); // Initialize as an array
+  const [dataplan, setDataPlan] = useState([]); // Initialize as an array
   const [filteredPlans, setFilteredPlans] = useState([]); // Store filtered plans
-  const [smartCardNumber, setSmartCardNumber] = useState("");
   const [amountToPay, setAmountToPay] = useState(0);
+  const [mobileNumber, setMobileNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState({});
   const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
-  const [showReceipt, setShowReceipt] = useState(false);
-  const [iucName, setIucName] = useState("");
-  const [planTitle, setPlanTitle] = useState("");
   const navigation = useNavigation();
 
   useEffect(() => {
     // Fetch wallet balance whenever the page is reloaded
     fetchWalletDetails();
-    fetchTvPlan();
+    fetchDataPlan();
   }, []);
 
   // Reusable function to fetch wallet details
@@ -61,130 +58,15 @@ const CableTvScreen = () => {
     }
   };
 
-  const fetchTvPlan = async () => {
+  // Fetch data plans
+  const fetchDataPlan = async () => {
     try {
-      const tvPlanResult = await vasServices.getAllTvPlan();
-      // console.log("Fetched TV Plans:", tvPlanResult); // Debug fetched plans
-      setTvPlan(tvPlanResult.data || []); // Set the plans or default to an empty array
+      const dataPlanResult = await vasServices.getAllDataPlan();
+      // console.log("Fetched Data Plans:", dataPlanResult);
+      setDataPlan(dataPlanResult.data); // Save all plans in state
     } catch (error) {
-      console.error("Error fetching TV plans:", error.message);
+      console.error("Error fetching data plans:", error);
     }
-  };
-
-  const handleTvTypeChange = (value) => {
-    setSelectedTvType(value);
-    setSelectedPlanId("");
-    setAmountToPay(0);
-
-    // Filter plans based on selected TV type
-    const filtered = (tvplan || []).filter((plan) => plan.type === value);
-    setFilteredPlans(filtered); // Update filtered plans
-    // console.log("Filtered Plans:", filtered); // Debug filtered plans
-  };
-
-  const handlePlanChange = (planId) => {
-    const selectedPlan = filteredPlans.find(
-      (plan) => plan.plan_id === parseInt(planId)
-    );
-    if (selectedPlan) {
-      setSelectedPlanId(planId);
-      setAmountToPay(parseFloat(selectedPlan.amount) + 80); // Add a processing fee
-    }
-  };
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchWalletDetails().finally(() => setRefreshing(false));
-  }, []);
-
-  const mapCablenameToNumber = (cablename) => {
-    switch (cablename) {
-      case "GOTV":
-        return 1;
-      case "DSTV":
-        return 2;
-      case "STARTIME":
-        return 3;
-      default:
-        return null;
-    }
-  };
-
-  const validateIUC = async () => {
-    if (!selectedTvType || !selectedPlanId || !smartCardNumber) {
-      Alert.alert("Error", "Please fill all fields.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const data = {
-        cablename: selectedTvType,
-        cableplan: selectedPlanId,
-        smart_card_number: smartCardNumber,
-      };
-      const response = await vasServices.validateIUC(data);
-      const selectedPlans = tvplan[data.cablename] || [];
-      const plan =
-        selectedPlans.find((plan) => plan.id === data.cableplan) || {};
-      setPlanTitle(plan.title);
-      setIucName(response.data.name);
-
-      setTransactionDetails({ ...data, name: response.data.name });
-      setShowModal(true);
-    } catch (error) {
-      Alert.alert("Error", "Validation failed. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePurchase = async () => {
-    setLoading(true);
-
-    const mappedCablename = mapCablenameToNumber(transactionDetails.cablename);
-    const dataToSubmit = {
-      ...transactionDetails,
-      cablename: mappedCablename,
-    };
-
-    if (wallet.balance < amountToPay) {
-      Alert.alert("Error", "Insufficient balance.");
-    } else {
-      try {
-        const response = await vasServices.cablesub(dataToSubmit);
-        if (response && !response.data.error) {
-          Alert.alert(
-            "Success",
-            "Subscription successful.",
-            [
-              {
-                text: "Download",
-                onPress: () => setShowReceipt(true), // Show the receipt to download
-              },
-              {
-                text: "Cancel",
-                onPress: () => {
-                  setShowReceipt(false);
-                  // Navigate back to the refreshed CableTvScreen
-                  navigation.goBack();
-                },
-              },
-            ],
-            { cancelable: false }
-          );
-          navigation.replace("CableTvScreen");
-          setShowModal(false);
-        } else {
-          Alert.alert("Error", "Transaction unsuccessful");
-          navigation.replace("CableTvScreen");
-          setShowModal(false);
-        }
-      } catch (error) {
-        Alert.alert("Error", "Transaction failed.", error);
-      }
-    }
-    setLoading(false);
   };
 
   const handleLogout = async () => {
@@ -194,6 +76,74 @@ const CableTvScreen = () => {
     } catch (error) {
       console.error("Error during logout:", error);
     }
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchWalletDetails().finally(() => setRefreshing(false));
+  }, []);
+
+  // Handle network selection
+  const handleNetworkChange = (value) => {
+    setSelectedNetwork(value);
+    setSelectedPlanId("");
+    setAmountToPay(0);
+
+    // Filter plans based on selected network ID
+    const filtered = dataplan.filter(
+      (plan) => plan.network_id === parseInt(value)
+    );
+
+    // console.log("Filtered Plans:", filtered); // Debug filtered plans
+    setFilteredPlans(filtered);
+  };
+
+  // Handle plan selection and update amount
+  const handlePlanChange = (planId) => {
+    const selectedPlan = filteredPlans.find(
+      (plan) => plan.plan_id === parseInt(planId)
+    );
+    if (selectedPlan) {
+      setSelectedPlanId(planId);
+      setAmountToPay(
+        Math.ceil(
+          parseInt(selectedPlan.amount) + parseInt(selectedPlan.amount) * 0.2
+        ) // Add 20% markup
+      );
+    }
+  };
+
+  const handlePurchase = async () => {
+    if (!selectedNetwork || !selectedPlanId || !mobileNumber) {
+      Alert.alert("Error", "Please fill all fields.");
+      return;
+    }
+    setLoading(true);
+    const data = {
+      network: selectedNetwork,
+      plan: selectedPlanId,
+      mobile_number: mobileNumber,
+      amount: amountToPay,
+    };
+    if (wallet.balance < amountToPay) {
+      Alert.alert("Error", "Insufficient balance.");
+    } else {
+      try {
+        const response = await vasServices.dataBundle(data);
+        if (response && !response.data.error) {
+          Alert.alert("Success", "Transaction successful");
+          setTransactionDetails({ ...data });
+          setShowModal(false);
+        } else {
+          Alert.alert("Error", "Transaction unsuccessful");
+          navigation.replace("DataScreen");
+          setShowModal(false);
+        }
+      } catch (error) {
+        Alert.alert("Error", "Transaction failed.");
+      }
+    }
+    setLoading(false);
   };
 
   return (
@@ -215,59 +165,71 @@ const CableTvScreen = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        <Text className="text-xl font-bold text-center mb-4">
-          Cable TV Subscription
+        <Text className="text-2xl font-bold text-center text-[#1F233B] mb-4">
+          Buy Data
         </Text>
-        {/* Display Wallet Info */}
-        <Text className="text-lg text-center mb-4">
+        <Text className="text-lg text-center text-gray-600 mb-2">
           Balance: ₦{wallet.balance}
         </Text>
-        <Text className="text-lg text-center mb-4">
+        <Text className="text-lg text-center text-gray-600 mb-6">
           Welcome, {wallet.name} {wallet.lastname}
         </Text>
-        {/* Select TV Provider */}
+
+        {/* <View className="flex-row gap-2 pr-2 my-4">
+          {["Home", "Airtime", "CableTv", "Electricity"].map((screen) => (
+            <TouchableOpacity
+              key={screen}
+              className="px-3 py-2 flex-1 rounded-lg bg-[#1F233B]"
+              onPress={() => navigation.navigate(screen)}
+            >
+              <Text className="text-white text-center font-medium">
+                {screen}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View> */}
+
         <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
           <Picker
-            selectedValue={selectedTvType}
-            onValueChange={handleTvTypeChange}
+            selectedValue={selectedNetwork}
+            onValueChange={(value) => handleNetworkChange(value)}
           >
-            <Picker.Item label="Select Provider" value="" />
-            <Picker.Item label="GOTV" value="GOTV" />
-            <Picker.Item label="DSTV" value="DSTV" />
-            <Picker.Item label="STARTIME" value="STARTIME" />
+            <Picker.Item label="Select Network" value="" />
+            <Picker.Item label="MTN" value="1" />
+            <Picker.Item label="GLO" value="2" />
+            <Picker.Item label="Airtel" value="4" />
+            <Picker.Item label="9mobile" value="3" />
           </Picker>
         </View>
 
-        {/* Select Plan */}
-        {selectedTvType && (
+        {selectedNetwork && (
           <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
             <Picker
               selectedValue={selectedPlanId}
-              onValueChange={handlePlanChange}
+              onValueChange={(value) => handlePlanChange(value)}
             >
               <Picker.Item label="Select Plan" value="" />
               {filteredPlans.map((plan) => (
                 <Picker.Item
-                  key={plan.plan_id}
-                  label={`${plan.title} - ₦${plan.amount}`}
-                  value={plan.plan_id}
+                  key={plan.plan_id || Math.random()}
+                  value={plan.plan_id || ""}
+                  label={`${plan.title || "Unknown Plan"} - ₦${Math.ceil(
+                    parseFloat(plan.amount || 0) * 1.2
+                  )}`}
                 />
               ))}
             </Picker>
           </View>
         )}
-
-        {/* Enter Smart Card Number */}
-
         <TextInput
-          value={smartCardNumber}
-          onChangeText={setSmartCardNumber}
-          placeholder="Enter Smart Card / IUC Number"
+          value={mobileNumber}
+          onChangeText={setMobileNumber}
+          placeholder="Enter Mobile Number"
           keyboardType="numeric"
-          className="p-4 mb-4 border rounded-lg bg-white"
+          className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md"
         />
 
-        <Text className="p-4 mb-4 border rounded-lg bg-white">
+        <Text className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md text-center font-semibold">
           Amount to Pay: ₦{amountToPay || "0.00"}
         </Text>
 
@@ -275,8 +237,8 @@ const CableTvScreen = () => {
           <ActivityIndicator size="large" color="#1F233B" />
         ) : (
           <CustomButton
-            title="Validate"
-            onPress={validateIUC}
+            title="Buy Now"
+            onPress={() => setShowModal(true)}
             style="bg-[#1F233B]"
           />
         )}
@@ -299,12 +261,10 @@ const CableTvScreen = () => {
               <Text className="text-lg font-bold mb-4">
                 Transaction Details
               </Text>
-              <Text>TV Provider: {selectedTvType}</Text>
-              {/* <Text>Plan: {planTitle}</Text> */}
-              <Text>IUC Name: {iucName}</Text>
-              <Text>IUC Number: {smartCardNumber}</Text>
+              {/* <Text>Network: {selectedNetwork}</Text>
+              <Text>Plan: {selected}</Text> */}
+              <Text>Mobile Number: {mobileNumber}</Text>
               <Text>Amount: ₦{amountToPay}</Text>
-
               <TouchableOpacity
                 className="mt-4 px-4 py-2 bg-[#1F233B] rounded-lg"
                 onPress={handlePurchase}
@@ -320,18 +280,10 @@ const CableTvScreen = () => {
             </View>
           </View>
         </Modal>
-
-        {/* {showReceipt && (
-        <PDFReceipt
-          show={showReceipt}
-          onHide={() => setShowReceipt(false)}
-          transactionDetails={transactionDetails}
-        />
-      )} */}
       </ScrollView>
       <Footer />
     </SafeAreaView>
   );
 };
 
-export default CableTvScreen;
+export default DataScreen;
