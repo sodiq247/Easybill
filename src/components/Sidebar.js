@@ -21,11 +21,11 @@ const Sidebar = ({ isVisible, toggleSidebar, logout }) => {
   return (
     <View style={{ position: 'absolute', zIndex: 10, left: 0, top: 0, bottom: 0, width: 250, backgroundColor: 'white', paddingTop: 0, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1 }}>
       <TouchableOpacity onPress={toggleSidebar} style={{ marginBottom: 24, marginTop: 0, alignSelf: 'flex-end' }}>
-        <Icon name="close" size={28} color="#14172A" />
+        <Icon name="arrow-drop-down" size={28} color="#14172A" />
       </TouchableOpacity>
-      <Text style={{ color: '#14172A', marginTop: 20, fontSize: 24, fontWeight: '600', marginBottom: 28 }}>
+      {/* <Text style={{ color: '#14172A', marginTop: 20, fontSize: 24, fontWeight: '600', marginBottom: 28 }}>
         Menu
-      </Text>
+      </Text> */}
       {services.map((service) => (
         <TouchableOpacity
           key={service.name}

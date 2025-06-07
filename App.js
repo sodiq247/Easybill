@@ -28,7 +28,7 @@ const App = () => {
       <MainNavigator />
       
       {/* WhatsApp Icon */}
-      <View style={{ position: 'absolute', bottom: 20, right: 20 }}>
+      <View style={{ position: 'absolute', bottom: 20, right: 20, display: 'none'  }}>
         <TouchableOpacity onPress={handleWhatsAppClick}>
           <Icon name="whatsapp" size={40} color="#25D366" />
         </TouchableOpacity>

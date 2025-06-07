@@ -253,7 +253,6 @@ Date: ${new Date().toLocaleString()}
   return (
     <SafeAreaView className="flex-1 h-screen bg-gray-100">
       <Sidebar isVisible={sidebarVisible} toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout} />
-      <Header toggleSidebar={() => setSidebarVisible(!sidebarVisible)} reloadData={onRefresh} logout={handleLogout} />
 
       <ScrollView
         className="p-6 bg-gray-100 flex-1"
@@ -465,6 +464,7 @@ Date: ${new Date().toLocaleString()}
           </View>
         </Modal>
       </ScrollView>
+      <Header toggleSidebar={() => setSidebarVisible(!sidebarVisible)} reloadData={onRefresh} logout={handleLogout} />
       <Footer />
     </SafeAreaView>
   )

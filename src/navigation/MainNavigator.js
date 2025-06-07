@@ -22,9 +22,12 @@ const MainNavigator = () => {
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="JAMB" component={HomeScreen} />
+        <Stack.Screen name="WAEC" component={HomeScreen} />
         <Stack.Screen name="Data" component={DataScreen} />
         <Stack.Screen name="Airtime" component={AirtimeScreen} />
         <Stack.Screen name="CableTv" component={CableTvScreen} />
+        <Stack.Screen name="TV" component={CableTvScreen} />
         <Stack.Screen name="Electricity" component={ElectricityScreen} />
         <Stack.Screen name="History" component={TransactionHistory} />
         </Stack.Navigator>

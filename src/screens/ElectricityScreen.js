@@ -142,11 +142,7 @@ const ElectricityScreen = () => {
         toggleSidebar={() => setSidebarVisible(false)}
         logout={handleLogout}
       />
-      <Header
-        toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-        reloadData={onRefresh}
-        logout={handleLogout}
-      />
+      
 
       <ScrollView
         className="p-6 bg-gray-100 flex-1"
@@ -277,6 +273,11 @@ const ElectricityScreen = () => {
           </View>
         </Modal>
       </ScrollView>
+      <Header
+        toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
+        reloadData={onRefresh}
+        logout={handleLogout}
+      />
       <Footer />
     </SafeAreaView>
   );

@@ -92,17 +92,17 @@ const LoginScreen = () => {
 
   return (
     <ImageBackground
-      // source={require("../../assets/login-bg.png")}
+      // source={require("../../assets/images/app-bg.png")}
       className="flex-1 p-5 pt-0 pb-0 justify-between items-center"
     >
-      <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md mt-[48%]">
+      <View className="w-full max-w-sm p-6 mt-[38%]">
         <Text
           style={{ fontFamily: "Lufga" }}
-          className="font-semibold text-4xl text-[#14172A] text-center leading-[65.26px]"
+          className="font-semibold text-5xl text-[#FD7C0E] text-center leading-[95.26px]"
         >
           Login
         </Text>
-        <Text className="text-gray-600 text-center mb-6">
+        <Text className="text-gray-600 text-center mb-12">
           Welcome back! Please enter your details to continue.
         </Text>
 
@@ -116,7 +116,7 @@ const LoginScreen = () => {
         />
 
         <View className="relative mt-4">
-          <View className="p-3 w-full flex-row items-center border border-gray-300 rounded-lg bg-white shadow-md">
+          <View className="px-3 py-0 w-full flex-row items-center border border-gray-300 rounded-lg bg-white shadow-md">
             <TextInput
               className="flex-1 bg-white"
               placeholder="Password"
@@ -137,9 +137,20 @@ const LoginScreen = () => {
               )}
             </TouchableOpacity>
           </View>
+           <TouchableOpacity
+            onPress={() => navigation.navigate("ForgotPasswordScreen")}
+            className="block left-40 mt-4 transform -translate-y-1/2"
+          >
+            <Text
+              style={{ fontFamily: "SpaceGrotesk" }}
+              className="font-semibold text--[#14172A] underline"
+            >
+              Forgot Password
+            </Text>
+          </TouchableOpacity>
         </View>
         <TouchableOpacity
-          className="w-full bg-[#14172A] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
+          className="w-full bg-[#FD7C0E] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
           onPress={handleSubmit}
           disabled={loading}
         >
@@ -155,23 +166,14 @@ const LoginScreen = () => {
           )}
         </TouchableOpacity>
 
-        <View className="flex flex-col justify-between mt-4 font-spaceGrotesk">
-          <TouchableOpacity
-            onPress={() => navigation.navigate("ForgotPasswordScreen")}
-          >
-            <Text
-              style={{ fontFamily: "SpaceGrotesk" }}
-              className="font-semibold text--[#14172A] underline"
-            >
-              Forgot Password
-            </Text>
-          </TouchableOpacity>
+        <View className="flex flex-row items-center justify-center mt-4 font-spaceGrotesk">
+         
           <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
             <Text className="text-[#14172A]">
               Don’t have an account?{" "}
               <Text
                 style={{ fontFamily: "SpaceGrotesk" }}
-                className="font-semibold text--[#14172A] underline"
+                className="font-semibold text--[#FD7C0E] underline"
               >
                 Sign Up
               </Text>
