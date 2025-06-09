@@ -1,189 +1,191 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator,
-  ImageBackground,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Import icons from MaterialIcons
-import accountServices from "../services/auth.services";
-import Footer from "../components/Footer";
+"use client"
+
+import { useState } from "react"
+import { View, Text, Alert, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from "react-native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useNavigation } from "@react-navigation/native"
+import accountServices from "../services/auth.services"
+import Footer from "../components/Footer"
+import Button from "../components/ui/Button"
+import Input from "../components/ui/Input"
+import { theme } from "../utils/theme"
+// Remove this import
+// import AppBackground from "../components/AppBackground"
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const navigation = useNavigation();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const navigation = useNavigation()
 
   const saveToken = async (token) => {
     try {
-      await AsyncStorage.setItem("access_token", token);
+      await AsyncStorage.setItem("access_token", token)
     } catch (e) {
-      console.error("Error saving token:", e);
+      console.error("Error saving token:", e)
     }
-  };
+  }
 
   const saveWalletDetails = async (walletDetails) => {
     try {
-      await AsyncStorage.setItem(
-        "walletDetails",
-        JSON.stringify(walletDetails)
-      );
+      await AsyncStorage.setItem("walletDetails", JSON.stringify(walletDetails))
     } catch (e) {
-      console.error("Error saving wallet details:", e);
+      console.error("Error saving wallet details:", e)
     }
-  };
+  }
 
   const handleSubmit = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Please fill all fields.");
-      return;
+      Alert.alert("Error", "Please fill all fields.")
+      return
     }
 
-    setLoading(true);
-    const data = { username: email, password };
+    setLoading(true)
+    const data = { username: email, password }
 
     try {
-      const result = await accountServices.login(data);
+      const result = await accountServices.login(data)
 
       if (result.body.loggedIn) {
-        await saveToken(result.body.access_token);
+        await saveToken(result.body.access_token)
 
         try {
-          const walletResult = await accountServices.walletBalance();
-          // console.log("walletResult", walletResult)
+          const walletResult = await accountServices.walletBalance()
           const walletDetails = {
             balance: walletResult.Wallet?.amount || 0,
             name: walletResult.Profile?.firstname || "",
             lastname: walletResult.Profile?.lastname || "",
             email: walletResult.Profile?.email || "",
-          };
-          await saveWalletDetails(walletDetails);
+          }
+          await saveWalletDetails(walletDetails)
 
-          Alert.alert("Success", "Login successful!");
+          Alert.alert("Success", "Login successful!")
           setTimeout(() => {
             navigation.reset({
               index: 0,
               routes: [{ name: "Home" }],
-            });
-          }, 500);
+            })
+          }, 500)
         } catch (walletError) {
-          console.error("Error fetching wallet balance:", walletError);
+          console.error("Error fetching wallet balance:", walletError)
         }
       } else {
-        console.error("Error", result.data?.message || "Login failed.");
+        console.error("Error", result.data?.message || "Login failed.")
       }
     } catch (error) {
-      console.error("Login error:", error);
-      Alert.alert("Error", "Login failed. Please try again.");
+      console.error("Login error:", error)
+      Alert.alert("Error", "Login failed. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <ImageBackground
-      // source={require("../../assets/images/app-bg.png")}
-      className="flex-1 p-5 pt-0 pb-0 justify-between items-center"
-    >
-      <View className="w-full max-w-sm p-6 mt-[38%]">
-        <Text
-          style={{ fontFamily: "Lufga" }}
-          className="font-semibold text-5xl text-[#FD7C0E] text-center leading-[95.26px]"
-        >
-          Login
-        </Text>
-        <Text className="text-gray-600 text-center mb-12">
-          Welcome back! Please enter your details to continue.
-        </Text>
+    // Remove this import
+    // import AppBackground from "../components/AppBackground"
 
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          className="p-3 w-full border border-gray-300 rounded-lg bg-white shadow-md"
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-
-        <View className="relative mt-4">
-          <View className="px-3 py-0 w-full flex-row items-center border border-gray-300 rounded-lg bg-white shadow-md">
-            <TextInput
-              className="flex-1 bg-white"
-              placeholder="Password"
-              value={password}
-              secureTextEntry={!showPassword}
-              onChangeText={setPassword}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            <TouchableOpacity
-              className=""
-              onPress={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? (
-                <Icon name="visibility-off" size={24} color="#14172A" />
-              ) : (
-                <Icon name="visibility" size={24} color="#14172A" />
-              )}
-            </TouchableOpacity>
-          </View>
-           <TouchableOpacity
-            onPress={() => navigation.navigate("ForgotPasswordScreen")}
-            className="block left-40 mt-4 transform -translate-y-1/2"
-          >
-            <Text
-              style={{ fontFamily: "SpaceGrotesk" }}
-              className="font-semibold text--[#14172A] underline"
-            >
-              Forgot Password
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity
-          className="w-full bg-[#FD7C0E] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
-          onPress={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text
-              style={{ fontFamily: "SpaceGrotesk" }}
-              className="text-white font-semibold"
-            >
-              Login
-            </Text>
-          )}
-        </TouchableOpacity>
-
-        <View className="flex flex-row items-center justify-center mt-4 font-spaceGrotesk">
-         
-          <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
-            <Text className="text-[#14172A]">
-              Don’t have an account?{" "}
+    // In the return statement, replace:
+    // <AppBackground>
+    //   <View style={{ flex: 1, backgroundColor: "transparent" }}>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", padding: 20 }}>
+            <View style={{ maxWidth: 400, alignSelf: "center", width: "100%" }}>
+              {/* Title */}
               <Text
-                style={{ fontFamily: "SpaceGrotesk" }}
-                className="font-semibold text--[#FD7C0E] underline"
+                style={{
+                  fontSize: 48,
+                  fontWeight: "600",
+                  color: theme.primary,
+                  textAlign: "center",
+                  marginBottom: 8,
+                  fontFamily: "Lufga",
+                }}
               >
-                Sign Up
+                Login
               </Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <Footer />
-    </ImageBackground>
-  );
-};
 
-export default LoginScreen;
+              {/* Subtitle */}
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: theme.textLight,
+                  textAlign: "center",
+                  marginBottom: 40,
+                }}
+              >
+                Welcome back! Please enter your details to continue.
+              </Text>
+
+              {/* Email Input */}
+              <Input
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email"
+                label="Email Address"
+                keyboardType="email-address"
+              />
+
+              {/* Password Input */}
+              <Input
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                label="Password"
+                secureTextEntry={!showPassword}
+                icon={showPassword ? "visibility-off" : "visibility"}
+                onIconPress={() => setShowPassword(!showPassword)}
+              />
+
+              {/* Forgot Password */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ForgotPasswordScreen")}
+                style={{ alignSelf: "flex-end", marginBottom: 24 }}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: theme.secondary,
+                    fontWeight: "600",
+                    textDecorationLine: "underline",
+                    fontFamily: "SpaceGrotesk",
+                  }}
+                >
+                  Forgot Password?
+                </Text>
+              </TouchableOpacity>
+
+              {/* Login Button */}
+              <Button text="Login" onPress={handleSubmit} loading={loading} disabled={loading} fullWidth={true} />
+
+              {/* Sign Up Link */}
+              <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 24 }}>
+                <Text style={{ color: theme.secondary }}>Don't have an account? </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
+                  <Text
+                    style={{
+                      color: theme.primary,
+                      fontWeight: "600",
+                      textDecorationLine: "underline",
+                      fontFamily: "SpaceGrotesk",
+                    }}
+                  >
+                    Sign Up
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+        <Footer />
+      </View>
+    </View>
+    // And at the end, replace:
+    //   </View>
+    // </AppBackground>
+  )
+}
+
+export default LoginScreen

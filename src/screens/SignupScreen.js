@@ -1,213 +1,230 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Alert,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  ImageBackground,
-  Image
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Import MaterialIcons for visibility icons
-import accountServices from "../services/auth.services";
-import Footer from "../components/Footer";
+"use client"
+
+import { useState } from "react"
+import { View, Text, Alert, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native"
+import { useNavigation } from "@react-navigation/native"
+import accountServices from "../services/auth.services"
+import Footer from "../components/Footer"
+import Button from "../components/ui/Button"
+import Input from "../components/ui/Input"
+import { theme } from "../utils/theme"
+// Remove this import
+// import AppBackground from "../components/AppBackground"
 
 const SignupScreen = () => {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [pin, setPin] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const navigation = useNavigation();
+  const [firstname, setFirstname] = useState("")
+  const [lastname, setLastname] = useState("")
+  const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState({})
+  const navigation = useNavigation()
 
   const validateInput = () => {
-    return (
-      firstname &&
-      lastname &&
-      email &&
-      phone &&
-      password &&
-      confirmPassword &&
-      password === confirmPassword
-    );
-  };
+    const newErrors = {}
+
+    if (!firstname.trim()) newErrors.firstname = "First name is required"
+    if (!lastname.trim()) newErrors.lastname = "Last name is required"
+    if (!email.trim()) newErrors.email = "Email is required"
+    if (!phone.trim()) newErrors.phone = "Phone number is required"
+    if (!password) newErrors.password = "Password is required"
+    if (!confirmPassword) newErrors.confirmPassword = "Please confirm your password"
+    if (password && confirmPassword && password !== confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async () => {
     if (!validateInput()) {
-      Alert.alert("Error", "Fill all fields and make sure passwords match");
-      return;
+      Alert.alert("Error", "Please fix the errors and try again")
+      return
     }
 
-    setLoading(true);
-    const role = "user";
-    const pin = "1234";
+    setLoading(true)
     const data = {
       firstname,
       lastname,
       email,
       phone: Number(phone),
-      pin,
-      role,
+      pin: "1234",
+      role: "user",
       password,
-    };
+    }
 
     try {
-      const result = await accountServices.signup(data);
-      // console.log("result", result);
+      const result = await accountServices.signup(data)
       if (result.message === "SUCCESSFUL") {
-        Alert.alert(result.body);
-        setTimeout(() => {
-          navigation.reset({ index: 0, routes: [{ name: "LoginScreen" }] });
-        }, 500);
+        Alert.alert("Success", result.body, [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.reset({ index: 0, routes: [{ name: "LoginScreen" }] })
+            },
+          },
+        ])
       } else {
-        console.log(result.message || "Signup failed.");
-        Alert.alert(result.message || "Signup failed.");
+        Alert.alert("Error", result.message || "Signup failed.")
       }
     } catch (error) {
-      console.log("Signup failed. Please try again.", setError);
-      Alert.alert("Signup failed. Please try again.");
+      Alert.alert("Error", "Signup failed. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <ImageBackground 
-      source={require("../../assets/icon.png")}
-      className="flex-1 p-5 pt-0 pb-0 justify-between items-center"
-    >
-      <View className="w-full mt-[20%] max-w-sm bg-white p-6 rounded-lg shadow-md">
-        <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")} className="flex flex-row gap-1">
-          {/* <Image 
-            source={require("../../assets/arrow-right.png")}
-            className="flex-1 p-5 justify-center items-center w-2 h-2"
-          /> */}
-          <Text className="w-full my-4 flex gap-1 text-gray-500 text-left">
-            Go to{" "}
-            <Text
-            style={{ fontFamily: "SpaceGrotesk" }}
-            className="underline ml-1 text-[#14172A] font-bold">
-            Login
-            </Text>
-          </Text>
-        </TouchableOpacity>
-        <Text
-          style={{ fontFamily: "Lufga" }}
-          className="font-semibold text-4xl text-[#14172A] text-center leading-[65.26px]"
-        >
-          SignUp
-        </Text>
-        <Text
-          style={{ fontFamily: "Lufga" }}
-          className="font-semibold my-1 font-normal text-[12px] text-[#14172A] text-left leading-[19.58px]"
-        >
-          Your gateway to quick and easy payments at amazing rates! Enter your
-          details and enjoy!
-        </Text>
+    // Remove this import
+    // import AppBackground from "../components/AppBackground"
 
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          value={firstname}
-          onChangeText={setFirstname}
-          placeholder="First Name"
-          className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-        />
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          value={lastname}
-          onChangeText={setLastname}
-          placeholder="Last Name"
-          className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-        />
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Email"
-          keyboardType="email-address"
-          className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-        />
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          value={phone}
-          onChangeText={setPhone}
-          placeholder="Phone Number"
-          keyboardType="numeric"
-          className="w-full mt-4 p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-        />
-        
-        <View className="relative mt-4">
-          <View className="flex-row items-center border border-gray-300 rounded-lg bg-gray-50">
-            <TextInput
-              style={{ fontFamily: "Lufga", flex: 1, padding: 12 }}
-              className="p-3"
-              placeholder="Password"
-              value={password}
-              secureTextEntry={!showPassword}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity
-              className="p-3"
-              onPress={() => setShowPassword(!showPassword)}
+    // In the return statement, replace:
+    // <AppBackground>
+    //   <View style={{ flex: 1, backgroundColor: "transparent" }}>
+
+    // With:
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", padding: 20 }}>
+            <View
+              style={{
+                maxWidth: 400,
+                alignSelf: "center",
+                width: "100%",
+                backgroundColor: theme.white,
+                padding: 24,
+                borderRadius: 16,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 5,
+              }}
             >
-              {showPassword ? (
-                <Icon name="visibility-off" size={20} color="#14172A" />
-              ) : (
-                <Icon name="visibility" size={20} color="#14172A" />
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
+              {/* Back to Login */}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("LoginScreen")}
+                style={{ alignSelf: "flex-start", marginBottom: 16 }}
+              >
+                <Text style={{ color: theme.secondary }}>
+                  Go to{" "}
+                  <Text
+                    style={{
+                      color: theme.primary,
+                      fontWeight: "600",
+                      textDecorationLine: "underline",
+                      fontFamily: "SpaceGrotesk",
+                    }}
+                  >
+                    Login
+                  </Text>
+                </Text>
+              </TouchableOpacity>
 
-        <View className="relative mt-4">
-          <View className="flex-row items-center border border-gray-300 rounded-lg bg-gray-50">
-            <TextInput
-              style={{ fontFamily: "Lufga", flex: 1, padding: 12 }}
-              className="p-3"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              secureTextEntry={!showConfirmPassword}
-              onChangeText={setConfirmPassword}
-            />
-            <TouchableOpacity
-              className="p-3"
-              onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              {showConfirmPassword ? (
-                <Icon name="visibility-off" size={20} color="#14172A" />
-              ) : (
-                <Icon name="visibility" size={20} color="#14172A" />
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
+              {/* Title */}
+              <Text
+                style={{
+                  fontSize: 36,
+                  fontWeight: "600",
+                  color: theme.secondary,
+                  textAlign: "center",
+                  marginBottom: 8,
+                  fontFamily: "Lufga",
+                }}
+              >
+                Sign Up
+              </Text>
 
-        <TouchableOpacity
-          className="w-full bg-[#14172A] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
-          onPress={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text
-            style={{ fontFamily: "SpaceGrotesk" }}
-            className="text-white font-semibold">SignUp</Text>
-          )}
-        </TouchableOpacity>
+              {/* Subtitle */}
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: theme.textLight,
+                  textAlign: "left",
+                  marginBottom: 24,
+                  fontFamily: "Lufga",
+                }}
+              >
+                Your gateway to quick and easy payments at amazing rates! Enter your details and enjoy!
+              </Text>
+
+              {/* Form Fields */}
+              <Input
+                value={firstname}
+                onChangeText={setFirstname}
+                placeholder="Enter your first name"
+                label="First Name"
+                error={errors.firstname}
+              />
+
+              <Input
+                value={lastname}
+                onChangeText={setLastname}
+                placeholder="Enter your last name"
+                label="Last Name"
+                error={errors.lastname}
+              />
+
+              <Input
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email"
+                label="Email"
+                keyboardType="email-address"
+                error={errors.email}
+              />
+
+              <Input
+                value={phone}
+                onChangeText={setPhone}
+                placeholder="Enter your phone number"
+                label="Phone Number"
+                keyboardType="numeric"
+                error={errors.phone}
+              />
+
+              <Input
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Enter your password"
+                label="Password"
+                secureTextEntry={!showPassword}
+                icon={showPassword ? "visibility-off" : "visibility"}
+                onIconPress={() => setShowPassword(!showPassword)}
+                error={errors.password}
+              />
+
+              <Input
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="Confirm your password"
+                label="Confirm Password"
+                secureTextEntry={!showConfirmPassword}
+                icon={showConfirmPassword ? "visibility-off" : "visibility"}
+                onIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                error={errors.confirmPassword}
+              />
+
+              {/* Sign Up Button */}
+              <Button text="Sign Up" onPress={handleSubmit} loading={loading} disabled={loading} fullWidth={true} />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+        <Footer />
       </View>
-      <Footer />
-    </ImageBackground>
-  );
-};
+    </View>
+    // And at the end, replace:
+    //   </View>
+    // </AppBackground>
 
-export default SignupScreen;
+    // With:
+  )
+}
+
+export default SignupScreen

@@ -4,6 +4,7 @@ import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
+import ProfileSettingsScreen from '../screens/ProfileSettingsScreen';
 import DataScreen from '../screens/DataScreen';
 import AirtimeScreen from '../screens/AirtimeScreen';
 import CableTvScreen from '../screens/CableTvScreen';
@@ -22,6 +23,7 @@ const MainNavigator = () => {
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="ProfileSettings" component={ProfileSettingsScreen} />
         <Stack.Screen name="JAMB" component={HomeScreen} />
         <Stack.Screen name="WAEC" component={HomeScreen} />
         <Stack.Screen name="Data" component={DataScreen} />

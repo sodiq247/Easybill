@@ -1,20 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  TextInput,
-  Modal,
-  Linking,
-  Alert,
-  ScrollView,
-} from "react-native"
+import { View, Text, TouchableOpacity, Modal, Linking, Alert, ScrollView } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import Icon from "react-native-vector-icons/MaterialIcons"
 import PaywithPaystack from "./PaywithPaystack"
+import Button from "./ui/Button"
+import Input from "./ui/Input"
+import { theme } from "../utils/theme"
 
 const FundWalletTypes = () => {
   const [activeTab, setActiveTab] = useState("opay")
@@ -30,14 +23,14 @@ const FundWalletTypes = () => {
       accountNumber: "8105082299",
       accountName: "Abdulrazaq Sodiq",
       bankName: "Opay",
-      color: "#1B4F72",
+      color: theme.primary,
       icon: "account-balance",
     },
     palmpay: {
       accountNumber: "8105082299",
       accountName: "Abdulrazaq Sodiq",
       bankName: "Palmpay",
-      color: "#7B68EE",
+      color: theme.accent,
       icon: "payment",
     },
   }
@@ -47,7 +40,6 @@ const FundWalletTypes = () => {
     try {
       const walletDetailsString = await AsyncStorage.getItem("walletDetails")
       if (!walletDetailsString) {
-        // Try alternative storage keys
         const userDataString = await AsyncStorage.getItem("userData")
         if (userDataString) {
           const userData = JSON.parse(userDataString)
@@ -74,7 +66,6 @@ const FundWalletTypes = () => {
 
   // Handle amount input with proper validation
   const handleAmountChange = (value) => {
-    // Remove any non-numeric characters
     const numericValue = value.replace(/[^0-9]/g, "")
     setAmount(numericValue)
   }
@@ -92,7 +83,7 @@ const FundWalletTypes = () => {
     }
 
     setProceedLoading(true)
-    await getEmail() // Ensure email is fetched
+    await getEmail()
     setProceedLoading(false)
     setShowModal(true)
   }
@@ -121,7 +112,6 @@ Please confirm this payment.`
       const canOpen = await Linking.canOpenURL(whatsappURL)
       if (canOpen) {
         await Linking.openURL(whatsappURL)
-        // Close modal after successful WhatsApp opening
         setTimeout(() => {
           setShowModal(false)
           setPaymentStep("")
@@ -158,111 +148,172 @@ Please confirm this payment.`
   }
 
   return (
-    <View className="bg-white rounded-2xl p-6 shadow-lg">
-      <Text className="text-2xl font-bold text-center text-gray-900 mb-6">Fund Your Wallet</Text>
+    <View
+      style={{
+        backgroundColor: theme.white,
+        borderRadius: 16,
+        padding: 24,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 5,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 24,
+          fontWeight: "700",
+          textAlign: "center",
+          color: theme.secondary,
+          marginBottom: 24,
+        }}
+      >
+        Fund Your Wallet
+      </Text>
 
       {/* Amount Input */}
-      <View className="mb-6">
-        <Text className="text-gray-700 font-semibold mb-3 text-base">Enter Amount</Text>
-        <View className="relative">
-          <TextInput
-            className="border-2 border-gray-200 rounded-xl px-4 py-4 text-lg font-semibold text-gray-900 bg-gray-50 focus:border-blue-500"
-            placeholder="0"
-            keyboardType="numeric"
-            value={amount}
-            onChangeText={handleAmountChange}
-            maxLength={10}
-          />
-          <View className="absolute left-4 top-4">
-            <Text className="text-lg font-semibold text-gray-600">₦</Text>
-          </View>
-        </View>
-        {amount && <Text className="text-sm text-gray-500 mt-2">Amount: ₦{formatAmount(amount)}</Text>}
+      <View style={{ marginBottom: 24 }}>
+        <Input
+          value={amount}
+          onChangeText={handleAmountChange}
+          placeholder="Enter amount"
+          label="Amount (₦)"
+          keyboardType="numeric"
+        />
+        {amount && (
+          <Text style={{ fontSize: 14, color: theme.textLight, marginTop: 8 }}>Amount: ₦{formatAmount(amount)}</Text>
+        )}
       </View>
 
       {/* Proceed Button */}
-      <TouchableOpacity
-        className={`bg-gray-900 rounded-xl py-4 px-6 ${proceedLoading || !amount ? "opacity-50" : ""}`}
+      <Button
+        text="Proceed"
         onPress={handleProceed}
+        loading={proceedLoading}
         disabled={proceedLoading || !amount}
-      >
-        {proceedLoading ? (
-          <View className="flex-row items-center justify-center">
-            <ActivityIndicator size="small" color="#FFFFFF" />
-            <Text className="text-white font-semibold text-center ml-2">Processing...</Text>
-          </View>
-        ) : (
-          <Text className="text-white font-semibold text-center text-lg">Proceed</Text>
-        )}
-      </TouchableOpacity>
+        fullWidth={true}
+      />
 
       {/* Payment Method Modal */}
       <Modal visible={showModal} transparent animationType="slide" onRequestClose={closeModal}>
-        <View className="flex-1 justify-center items-center bg-black/50">
-          <View className="bg-white rounded-3xl p-6 w-11/12 max-w-md max-h-4/5">
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: theme.white,
+              borderRadius: 24,
+              padding: 24,
+              width: "90%",
+              maxWidth: 400,
+              maxHeight: "80%",
+            }}
+          >
             <ScrollView showsVerticalScrollIndicator={false}>
               {paymentStep === "" ? (
                 <>
                   {/* Payment Method Selection */}
-                  <View className="flex-row items-center justify-between mb-6">
-                    <Text className="text-xl font-bold text-gray-900">Select Payment Method</Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 24,
+                    }}
+                  >
+                    <Text style={{ fontSize: 20, fontWeight: "700", color: theme.secondary }}>
+                      Select Payment Method
+                    </Text>
                     <TouchableOpacity onPress={closeModal}>
-                      <Icon name="close" size={24} color="#6B7280" />
+                      <Icon name="close" size={24} color={theme.textFaded} />
                     </TouchableOpacity>
                   </View>
 
-                  <Text className="text-center text-gray-600 mb-6">Amount: ₦{formatAmount(amount)}</Text>
-
-                  <TouchableOpacity
-                    className="bg-blue-500 rounded-xl py-4 mb-4 flex-row items-center justify-center"
-                    onPress={() => setPaymentStep("bank")}
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: theme.textLight,
+                      marginBottom: 24,
+                      fontSize: 16,
+                    }}
                   >
-                    <Icon name="account-balance" size={24} color="#FFFFFF" />
-                    <Text className="text-white font-semibold text-center ml-3 text-lg">Pay with Bank Transfer</Text>
-                  </TouchableOpacity>
+                    Amount: ₦{formatAmount(amount)}
+                  </Text>
 
-                  <TouchableOpacity
-                    className="bg-green-500 rounded-xl py-4 flex-row items-center justify-center"
-                    onPress={() => setPaymentStep("paystack")}
-                  >
-                    <Icon name="credit-card" size={24} color="#FFFFFF" />
-                    <Text className="text-white font-semibold text-center ml-3 text-lg">Pay with Card</Text>
-                  </TouchableOpacity>
+                  <View style={{ gap: 16 }}>
+                    <Button
+                      text="Pay with Bank Transfer"
+                      icon="account-balance"
+                      onPress={() => setPaymentStep("bank")}
+                      fullWidth={true}
+                    />
+
+                    <Button
+                      text="Pay with Card"
+                      icon="credit-card"
+                      variant="secondary"
+                      onPress={() => setPaymentStep("paystack")}
+                      fullWidth={true}
+                    />
+                  </View>
                 </>
               ) : paymentStep === "bank" ? (
                 <>
                   {/* Bank Transfer Section */}
-                  <View className="flex-row items-center justify-between mb-6">
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 24,
+                    }}
+                  >
                     <TouchableOpacity onPress={() => setPaymentStep("")}>
-                      <Icon name="arrow-back" size={24} color="#6B7280" />
+                      <Icon name="arrow-back" size={24} color={theme.textFaded} />
                     </TouchableOpacity>
-                    <Text className="text-xl font-bold text-gray-900">Bank Transfer</Text>
+                    <Text style={{ fontSize: 20, fontWeight: "700", color: theme.secondary }}>Bank Transfer</Text>
                     <TouchableOpacity onPress={closeModal}>
-                      <Icon name="close" size={24} color="#6B7280" />
+                      <Icon name="close" size={24} color={theme.textFaded} />
                     </TouchableOpacity>
                   </View>
 
                   {/* Bank Selection Tabs */}
-                  <Text className="text-lg font-semibold text-gray-800 mb-4">Select Your Bank</Text>
-                  <View className="flex-row mb-6">
+                  <Text style={{ fontSize: 18, fontWeight: "600", color: theme.secondary, marginBottom: 16 }}>
+                    Select Your Bank
+                  </Text>
+                  <View style={{ flexDirection: "row", marginBottom: 24, gap: 8 }}>
                     {Object.keys(bankDetails).map((key) => (
                       <TouchableOpacity
                         key={key}
-                        className={`flex-1 mx-1 py-3 rounded-xl border-2 ${
-                          activeTab === key ? "bg-blue-50 border-blue-500" : "bg-gray-50 border-gray-200"
-                        }`}
+                        style={{
+                          flex: 1,
+                          paddingVertical: 12,
+                          borderRadius: 12,
+                          borderWidth: 2,
+                          borderColor: activeTab === key ? theme.primary : theme.border,
+                          backgroundColor: activeTab === key ? theme.primaryFaded : theme.background,
+                        }}
                         onPress={() => setActiveTab(key)}
                       >
-                        <View className="items-center">
+                        <View style={{ alignItems: "center" }}>
                           <Icon
                             name={bankDetails[key].icon}
                             size={24}
-                            color={activeTab === key ? "#3B82F6" : "#6B7280"}
+                            color={activeTab === key ? theme.primary : theme.textFaded}
                           />
                           <Text
-                            className={`text-center font-semibold mt-1 ${
-                              activeTab === key ? "text-blue-600" : "text-gray-600"
-                            }`}
+                            style={{
+                              textAlign: "center",
+                              fontWeight: "600",
+                              marginTop: 4,
+                              color: activeTab === key ? theme.primary : theme.textLight,
+                            }}
                           >
                             {bankDetails[key].bankName}
                           </Text>
@@ -272,67 +323,88 @@ Please confirm this payment.`
                   </View>
 
                   {/* Transfer Details */}
-                  <View className="bg-gray-50 rounded-xl p-4 mb-6">
-                    <Text className="text-lg font-bold text-gray-900 mb-4">Transfer Details</Text>
+                  <View
+                    style={{
+                      backgroundColor: theme.primaryFaded,
+                      borderRadius: 12,
+                      padding: 16,
+                      marginBottom: 24,
+                    }}
+                  >
+                    <Text style={{ fontSize: 18, fontWeight: "700", color: theme.secondary, marginBottom: 16 }}>
+                      Transfer Details
+                    </Text>
 
-                    <View className="space-y-3">
-                      <View className="flex-row justify-between">
-                        <Text className="text-gray-600 font-medium">Amount:</Text>
-                        <Text className="text-gray-900 font-bold">₦{formatAmount(amount)}</Text>
+                    <View style={{ gap: 12 }}>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={{ color: theme.textLight, fontWeight: "500" }}>Amount:</Text>
+                        <Text style={{ color: theme.secondary, fontWeight: "700" }}>₦{formatAmount(amount)}</Text>
                       </View>
 
-                      <View className="flex-row justify-between">
-                        <Text className="text-gray-600 font-medium">Bank Name:</Text>
-                        <Text className="text-gray-900 font-semibold">{bankDetails[activeTab].bankName}</Text>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={{ color: theme.textLight, fontWeight: "500" }}>Bank Name:</Text>
+                        <Text style={{ color: theme.secondary, fontWeight: "600" }}>
+                          {bankDetails[activeTab].bankName}
+                        </Text>
                       </View>
 
-                      <View className="flex-row justify-between">
-                        <Text className="text-gray-600 font-medium">Account Number:</Text>
-                        <Text className="text-gray-900 font-semibold">{bankDetails[activeTab].accountNumber}</Text>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={{ color: theme.textLight, fontWeight: "500" }}>Account Number:</Text>
+                        <Text style={{ color: theme.secondary, fontWeight: "600" }}>
+                          {bankDetails[activeTab].accountNumber}
+                        </Text>
                       </View>
 
-                      <View className="flex-row justify-between">
-                        <Text className="text-gray-600 font-medium">Account Name:</Text>
-                        <Text className="text-gray-900 font-semibold">{bankDetails[activeTab].accountName}</Text>
+                      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={{ color: theme.textLight, fontWeight: "500" }}>Account Name:</Text>
+                        <Text style={{ color: theme.secondary, fontWeight: "600" }}>
+                          {bankDetails[activeTab].accountName}
+                        </Text>
                       </View>
                     </View>
 
-                    <View className="bg-red-50 rounded-lg p-3 mt-4">
-                      <Text className="text-red-700 font-semibold text-center">⚠️ Transfer the exact amount above!</Text>
+                    <View
+                      style={{
+                        backgroundColor: `${theme.warning}20`,
+                        borderRadius: 8,
+                        padding: 12,
+                        marginTop: 16,
+                      }}
+                    >
+                      <Text style={{ color: theme.warning, fontWeight: "600", textAlign: "center" }}>
+                        ⚠️ Transfer the exact amount above!
+                      </Text>
                     </View>
                   </View>
 
                   {/* Confirmation Button */}
-                  <TouchableOpacity
-                    className={`bg-green-500 rounded-xl py-4 flex-row items-center justify-center ${
-                      loading ? "opacity-50" : ""
-                    }`}
+                  <Button
+                    text="I've Sent the Money"
+                    icon="check-circle"
                     onPress={handleTransferConfirmation}
+                    loading={loading}
                     disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <ActivityIndicator size="small" color="#FFFFFF" />
-                        <Text className="text-white font-semibold ml-2">Sending...</Text>
-                      </>
-                    ) : (
-                      <>
-                        <Icon name="check-circle" size={24} color="#FFFFFF" />
-                        <Text className="text-white font-semibold ml-2 text-lg">I've Sent the Money</Text>
-                      </>
-                    )}
-                  </TouchableOpacity>
+                    fullWidth={true}
+                    variant="success"
+                  />
                 </>
               ) : (
                 <>
                   {/* Paystack Payment Section */}
-                  <View className="flex-row items-center justify-between mb-6">
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 24,
+                    }}
+                  >
                     <TouchableOpacity onPress={() => setPaymentStep("")}>
-                      <Icon name="arrow-back" size={24} color="#6B7280" />
+                      <Icon name="arrow-back" size={24} color={theme.textFaded} />
                     </TouchableOpacity>
-                    <Text className="text-xl font-bold text-gray-900">Card Payment</Text>
+                    <Text style={{ fontSize: 20, fontWeight: "700", color: theme.secondary }}>Card Payment</Text>
                     <TouchableOpacity onPress={closeModal}>
-                      <Icon name="close" size={24} color="#6B7280" />
+                      <Icon name="close" size={24} color={theme.textFaded} />
                     </TouchableOpacity>
                   </View>
                   <PaywithPaystack amount={amount} email={email} onClose={closeModal} />
@@ -341,9 +413,7 @@ Please confirm this payment.`
             </ScrollView>
 
             {/* Cancel Button */}
-            <TouchableOpacity className="bg-gray-200 rounded-xl py-3 mt-4" onPress={closeModal}>
-              <Text className="text-gray-700 font-semibold text-center">Cancel</Text>
-            </TouchableOpacity>
+            <Button text="Cancel" variant="outline" onPress={closeModal} fullWidth={true} />
           </View>
         </View>
       </Modal>

@@ -1,109 +1,153 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  ImageBackground,
-  ActivityIndicator,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import Footer from "../components/Footer";
-import accountServices from "../services/auth.services";
+"use client"
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const navigation = useNavigation();
+import { useState } from "react"
+import { View, Text, Alert, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity } from "react-native"
+import { useNavigation } from "@react-navigation/native"
+import Footer from "../components/Footer"
+import accountServices from "../services/auth.services"
+import Button from "../components/ui/Button"
+import Input from "../components/ui/Input"
+import { theme } from "../utils/theme"
+// Remove this import
+// import AppBackground from "../components/AppBackground"
+
+const ForgotPasswordScreen = () => {
+  const [email, setEmail] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState("")
+  const navigation = useNavigation()
 
   const handleSubmit = async () => {
     if (!email) {
-      Alert.alert("Error", "Please fill all fields.");
-      return;
+      Alert.alert("Error", "Please enter your email address.")
+      return
     }
 
-    setLoading(true);
-    const data = { username: email };
+    setLoading(true)
+    const data = { username: email }
 
     try {
-      const result = await accountServices.requestPasswordReset(data);
+      const result = await accountServices.requestPasswordReset(data)
       if (result.code === 200) {
-        setMessage("Password reset email sent. Please check your inbox.");
+        setMessage("Password reset email sent. Please check your inbox.")
         setTimeout(() => {
-          navigation.replace("LoginScreen");
-          window.location.reload();
-        }, 2000);
+          navigation.replace("LoginScreen")
+        }, 2000)
       } else {
-        setMessage("Failed to send password reset email. Please try again.");
+        setMessage("Failed to send password reset email. Please try again.")
       }
     } catch (error) {
-      setMessage("Failed to send password reset email. Please try again.");
+      setMessage("Failed to send password reset email. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <ImageBackground
-      source={require("../../assets/login-bg.png")}
-      className="flex-1 flex-col  bg-[#14172A] p-5 pt-0 pb-0 justify-between items-center"
-    >
-      <View className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md mt-[50%]">
-        <Text
-          style={{ fontFamily: "Lufga" }}
-          className="font-semibold  text-3xl text-[#14172A] text-center leading-[65.26px]"
-        >
-          Forgot Password
-        </Text>
-        <Text className="text-gray-600 text-center mb-6">
-          A link will be sent to you’re email to help reset your password.
-        </Text>
-
-        <TextInput
-          style={{ fontFamily: "Lufga" }}
-          className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500"
-          placeholder="Email Address"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-
-        <TouchableOpacity
-          className="w-full bg-[#14172A] text-white p-3 rounded-lg mt-6 flex items-center justify-center"
-          onPress={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text
-              style={{ fontFamily: "SpaceGrotesk" }}
-              className="text-white font-semibold"
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", padding: 20 }}>
+            <View
+              style={{
+                maxWidth: 400,
+                alignSelf: "center",
+                width: "100%",
+                backgroundColor: theme.white,
+                padding: 24,
+                borderRadius: 16,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 5,
+              }}
             >
-              Send Link
-            </Text>
-          )}
-        </TouchableOpacity>
-
-        <View className="flex flex-col justify-between mt-4 font-spaceGrotesk">
-          <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
-            {/* <img src={BackIcon} alt="back-icon" /> */}
-            <Text className="w-full my-4 flex gap-1 text-gray-500 text-left">
-              Go to{" "}
+              {/* Title */}
               <Text
-                style={{ fontFamily: "SpaceGrotesk" }}
-                className="underline ml-1 text-[#14172A] font-semibold"
+                style={{
+                  fontSize: 32,
+                  fontWeight: "600",
+                  color: theme.secondary,
+                  textAlign: "center",
+                  marginBottom: 8,
+                  fontFamily: "Lufga",
+                }}
               >
-                Login
+                Forgot Password
               </Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <Footer />
-    </ImageBackground>
-  );
-};
 
-export default LoginScreen;
+              {/* Subtitle */}
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: theme.textLight,
+                  textAlign: "center",
+                  marginBottom: 32,
+                }}
+              >
+                A link will be sent to your email to help reset your password.
+              </Text>
+
+              {/* Email Input */}
+              <Input
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email address"
+                label="Email Address"
+                keyboardType="email-address"
+              />
+
+              {/* Message Display */}
+              {message ? (
+                <View
+                  style={{
+                    backgroundColor: message.includes("sent") ? theme.primaryFaded : "#FEE2E2",
+                    padding: 12,
+                    borderRadius: 8,
+                    marginBottom: 16,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: message.includes("sent") ? theme.success : theme.error,
+                      textAlign: "center",
+                      fontSize: 14,
+                    }}
+                  >
+                    {message}
+                  </Text>
+                </View>
+              ) : null}
+
+              {/* Send Link Button */}
+              <Button text="Send Link" onPress={handleSubmit} loading={loading} disabled={loading} fullWidth={true} />
+
+              {/* Back to Login */}
+              <View style={{ marginTop: 24, alignItems: "center" }}>
+                <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
+                  <Text style={{ color: theme.secondary }}>
+                    Go to{" "}
+                    <Text
+                      style={{
+                        color: theme.primary,
+                        fontWeight: "600",
+                        textDecorationLine: "underline",
+                        fontFamily: "SpaceGrotesk",
+                      }}
+                    >
+                      Login
+                    </Text>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+        <Footer />
+      </View>
+    </View>
+  )
+}
+
+export default ForgotPasswordScreen

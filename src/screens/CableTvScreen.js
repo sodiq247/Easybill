@@ -1,337 +1,356 @@
-import React, { useState, useEffect, useCallback } from "react";
-import {
-  View,
-  Text,
-  Alert,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  SafeAreaView,
-  Modal,
-  RefreshControl,
-} from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-import CustomButton from "../components/CustomButton";
-import vasServices from "../services/vasServices";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import accountServices from "../services/auth.services";
+"use client"
+
+import { useState, useEffect, useCallback } from "react"
+import { View, Text, Alert, ScrollView, ActivityIndicator, SafeAreaView, Modal, RefreshControl } from "react-native"
+import { Picker } from "@react-native-picker/picker"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { useNavigation } from "@react-navigation/native"
+import vasServices from "../services/vasServices"
+import Sidebar from "../components/Sidebar"
+import Header from "../components/Header"
+import Footer from "../components/Footer"
+import accountServices from "../services/auth.services"
+import Button from "../components/ui/Button"
+import Input from "../components/ui/Input"
+import { theme } from "../utils/theme"
 
 const CableTvScreen = () => {
-  const [refreshing, setRefreshing] = useState(false);
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [selectedTvType, setSelectedTvType] = useState("");
-  const [selectedPlanId, setSelectedPlanId] = useState("");
-  const [tvplan, setTvPlan] = useState([]); // Initialize as an array
-  const [filteredPlans, setFilteredPlans] = useState([]); // Store filtered plans
-  const [smartCardNumber, setSmartCardNumber] = useState("");
-  const [amountToPay, setAmountToPay] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [transactionDetails, setTransactionDetails] = useState({});
-  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
-  const [showReceipt, setShowReceipt] = useState(false);
-  const [iucName, setIucName] = useState("");
-  const [planTitle, setPlanTitle] = useState("");
-  const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false)
+  const [sidebarVisible, setSidebarVisible] = useState(false)
+  const [selectedTvType, setSelectedTvType] = useState("")
+  const [selectedPlanId, setSelectedPlanId] = useState("")
+  const [tvplan, setTvPlan] = useState([])
+  const [filteredPlans, setFilteredPlans] = useState([])
+  const [smartCardNumber, setSmartCardNumber] = useState("")
+  const [amountToPay, setAmountToPay] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [transactionDetails, setTransactionDetails] = useState({})
+  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" })
+  const [iucName, setIucName] = useState("")
+  const [planTitle, setPlanTitle] = useState("")
+  const navigation = useNavigation()
 
   useEffect(() => {
-    // Fetch wallet balance whenever the page is reloaded
-    fetchWalletDetails();
-    fetchTvPlan();
-  }, []);
+    fetchWalletDetails()
+    fetchTvPlan()
+  }, [])
 
-  // Reusable function to fetch wallet details
   const fetchWalletDetails = async () => {
     try {
-      const walletResult = await accountServices.walletBalance();
-      // console.log("Wallet Result:", walletResult);
+      const walletResult = await accountServices.walletBalance()
       const walletDetails = {
         balance: walletResult.Wallet?.amount || 0,
         name: walletResult.Profile?.firstname || "",
         lastName: walletResult.Profile?.lastname || "",
-      };
-      setWallet(walletDetails); // Set the fetched wallet details
+      }
+      setWallet(walletDetails)
     } catch (error) {
-      console.error("Error fetching wallet details:", error);
+      console.error("Error fetching wallet details:", error)
     }
-  };
+  }
 
   const fetchTvPlan = async () => {
     try {
-      const tvPlanResult = await vasServices.getAllTvPlan();
-      // console.log("Fetched TV Plans:", tvPlanResult); // Debug fetched plans
-      setTvPlan(tvPlanResult.data || []); // Set the plans or default to an empty array
+      const tvPlanResult = await vasServices.getAllTvPlan()
+      setTvPlan(tvPlanResult.data || [])
     } catch (error) {
-      console.error("Error fetching TV plans:", error.message);
+      console.error("Error fetching TV plans:", error.message)
     }
-  };
+  }
 
   const handleTvTypeChange = (value) => {
-    setSelectedTvType(value);
-    setSelectedPlanId("");
-    setAmountToPay(0);
+    setSelectedTvType(value)
+    setSelectedPlanId("")
+    setAmountToPay(0)
 
-    // Filter plans based on selected TV type
-    const filtered = (tvplan || []).filter((plan) => plan.type === value);
-    setFilteredPlans(filtered); // Update filtered plans
-    // console.log("Filtered Plans:", filtered); // Debug filtered plans
-  };
+    const filtered = (tvplan || []).filter((plan) => plan.type === value)
+    setFilteredPlans(filtered)
+  }
 
   const handlePlanChange = (planId) => {
-    const selectedPlan = filteredPlans.find(
-      (plan) => plan.plan_id === parseInt(planId)
-    );
+    const selectedPlan = filteredPlans.find((plan) => plan.plan_id === Number.parseInt(planId))
     if (selectedPlan) {
-      setSelectedPlanId(planId);
-      setAmountToPay(parseFloat(selectedPlan.amount) + 80); // Add a processing fee
+      setSelectedPlanId(planId)
+      setAmountToPay(Number.parseFloat(selectedPlan.amount) + 80) // Add processing fee
+      setPlanTitle(selectedPlan.title)
     }
-  };
+  }
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    fetchWalletDetails().finally(() => setRefreshing(false));
-  }, []);
+    setRefreshing(true)
+    fetchWalletDetails().finally(() => setRefreshing(false))
+  }, [])
 
   const mapCablenameToNumber = (cablename) => {
     switch (cablename) {
       case "GOTV":
-        return 1;
+        return 1
       case "DSTV":
-        return 2;
+        return 2
       case "STARTIME":
-        return 3;
+        return 3
       default:
-        return null;
+        return null
     }
-  };
+  }
 
   const validateIUC = async () => {
     if (!selectedTvType || !selectedPlanId || !smartCardNumber) {
-      Alert.alert("Error", "Please fill all fields.");
-      return;
+      Alert.alert("Error", "Please fill all fields.")
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
     try {
       const data = {
         cablename: selectedTvType,
         cableplan: selectedPlanId,
         smart_card_number: smartCardNumber,
-      };
-      const response = await vasServices.validateIUC(data);
-      const selectedPlans = tvplan[data.cablename] || [];
-      const plan =
-        selectedPlans.find((plan) => plan.id === data.cableplan) || {};
-      setPlanTitle(plan.title);
-      setIucName(response.data.name);
-
-      setTransactionDetails({ ...data, name: response.data.name });
-      setShowModal(true);
+      }
+      const response = await vasServices.validateIUC(data)
+      setIucName(response.data.name)
+      setTransactionDetails({ ...data, name: response.data.name })
+      setShowModal(true)
     } catch (error) {
-      Alert.alert("Error", "Validation failed. Please try again.");
+      Alert.alert("Error", "Validation failed. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handlePurchase = async () => {
-    setLoading(true);
+    setLoading(true)
 
-    const mappedCablename = mapCablenameToNumber(transactionDetails.cablename);
+    const mappedCablename = mapCablenameToNumber(transactionDetails.cablename)
     const dataToSubmit = {
       ...transactionDetails,
       cablename: mappedCablename,
-    };
+    }
 
     if (wallet.balance < amountToPay) {
-      Alert.alert("Error", "Insufficient balance.");
+      Alert.alert("Error", "Insufficient balance.")
     } else {
       try {
-        const response = await vasServices.cablesub(dataToSubmit);
+        const response = await vasServices.cablesub(dataToSubmit)
         if (response && !response.data.error) {
-          Alert.alert(
-            "Success",
-            "Subscription successful.",
-            [
-              {
-                text: "Download",
-                onPress: () => setShowReceipt(true), // Show the receipt to download
+          Alert.alert("Success", "Subscription successful.", [
+            {
+              text: "OK",
+              onPress: () => {
+                setShowModal(false)
+                // Reset form
+                setSelectedTvType("")
+                setSelectedPlanId("")
+                setSmartCardNumber("")
+                setAmountToPay(0)
+                setFilteredPlans([])
+                fetchWalletDetails()
               },
-              {
-                text: "Cancel",
-                onPress: () => {
-                  setShowReceipt(false);
-                  // Navigate back to the refreshed CableTvScreen
-                  navigation.goBack();
-                },
-              },
-            ],
-            { cancelable: false }
-          );
-          navigation.replace("CableTvScreen");
-          setShowModal(false);
+            },
+          ])
         } else {
-          Alert.alert("Error", "Transaction unsuccessful");
-          navigation.replace("CableTvScreen");
-          setShowModal(false);
+          Alert.alert("Error", "Transaction unsuccessful")
+          setShowModal(false)
         }
       } catch (error) {
-        Alert.alert("Error", "Transaction failed.", error);
+        Alert.alert("Error", "Transaction failed.")
       }
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.clear();
-      navigation.replace("LoginScreen");
+      await AsyncStorage.clear()
+      navigation.replace("LoginScreen")
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error("Error during logout:", error)
     }
-  };
+  }
+
+  const tvProviderOptions = [
+    { label: "Select Provider", value: "" },
+    { label: "GOTV", value: "GOTV" },
+    { label: "DSTV", value: "DSTV" },
+    { label: "STARTIME", value: "STARTIME" },
+  ]
 
   return (
-    <SafeAreaView className="flex-1 h-screen bg-gray-100 ">
-      <Sidebar
-        isVisible={sidebarVisible}
-        toggleSidebar={() => setSidebarVisible(false)}
-        logout={handleLogout}
-      />
-      <Header
-        toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
-        reloadData={onRefresh}
-        logout={handleLogout}
-      />
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+      <Sidebar isVisible={sidebarVisible} toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout} />
 
       <ScrollView
-        className="p-6 bg-gray-100 flex-1"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        style={{ flex: 1, padding: 24 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primary]} />}
       >
-        <Text className="text-xl font-bold text-center mb-4">
+        {/* Header */}
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "700",
+            textAlign: "center",
+            color: theme.secondary,
+            marginBottom: 16,
+          }}
+        >
           Cable TV Subscription
         </Text>
-        {/* Display Wallet Info */}
-        <Text className="text-lg text-center mb-4">
-          Balance: ₦{wallet.balance}
-        </Text>
-        <Text className="text-lg text-center mb-4">
-          Welcome, {wallet.name} {wallet.lastname}
-        </Text>
-        {/* Select TV Provider */}
-        <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
-          <Picker
-            selectedValue={selectedTvType}
-            onValueChange={handleTvTypeChange}
-          >
-            <Picker.Item label="Select Provider" value="" />
-            <Picker.Item label="GOTV" value="GOTV" />
-            <Picker.Item label="DSTV" value="DSTV" />
-            <Picker.Item label="STARTIME" value="STARTIME" />
+
+        {/* Wallet Info */}
+        <View
+          style={{
+            backgroundColor: theme.primaryFaded,
+            padding: 16,
+            borderRadius: 12,
+            marginBottom: 24,
+          }}
+        >
+          <Text style={{ fontSize: 18, textAlign: "center", color: theme.textLight, marginBottom: 4 }}>
+            Balance: ₦{wallet.balance.toLocaleString()}
+          </Text>
+          <Text style={{ fontSize: 16, textAlign: "center", color: theme.textLight }}>
+            Welcome, {wallet.name} {wallet.lastname}
+          </Text>
+        </View>
+
+        {/* TV Provider Selection */}
+        <View
+          style={{
+            backgroundColor: theme.white,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: theme.border,
+            marginBottom: 16,
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: "500", color: theme.text, margin: 16, marginBottom: 8 }}>
+            Select TV Provider
+          </Text>
+          <Picker selectedValue={selectedTvType} onValueChange={handleTvTypeChange}>
+            {tvProviderOptions.map((option) => (
+              <Picker.Item key={option.value} label={option.label} value={option.value} />
+            ))}
           </Picker>
         </View>
 
-        {/* Select Plan */}
+        {/* Plan Selection */}
         {selectedTvType && (
-          <View className="p-4 mb-4 border border-gray-300 rounded-lg bg-white shadow-md">
-            <Picker
-              selectedValue={selectedPlanId}
-              onValueChange={handlePlanChange}
-            >
+          <View
+            style={{
+              backgroundColor: theme.white,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: theme.border,
+              marginBottom: 16,
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: "500", color: theme.text, margin: 16, marginBottom: 8 }}>
+              Select Plan
+            </Text>
+            <Picker selectedValue={selectedPlanId} onValueChange={handlePlanChange}>
               <Picker.Item label="Select Plan" value="" />
               {filteredPlans.map((plan) => (
-                <Picker.Item
-                  key={plan.plan_id}
-                  label={`${plan.title} - ₦${plan.amount}`}
-                  value={plan.plan_id}
-                />
+                <Picker.Item key={plan.plan_id} label={`${plan.title} - ₦${plan.amount}`} value={plan.plan_id} />
               ))}
             </Picker>
           </View>
         )}
 
-        {/* Enter Smart Card Number */}
-
-        <TextInput
+        {/* Smart Card Number Input */}
+        <Input
           value={smartCardNumber}
           onChangeText={setSmartCardNumber}
           placeholder="Enter Smart Card / IUC Number"
+          label="Smart Card / IUC Number"
           keyboardType="numeric"
-          className="p-4 mb-4 border rounded-lg bg-white"
         />
 
-        <Text className="p-4 mb-4 border rounded-lg bg-white">
-          Amount to Pay: ₦{amountToPay || "0.00"}
-        </Text>
+        {/* Amount to Pay Display */}
+        <View
+          style={{
+            backgroundColor: theme.white,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: theme.border,
+            padding: 16,
+            marginBottom: 24,
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: "500", color: theme.text, marginBottom: 8 }}>
+            Amount to Pay (including ₦80 processing fee)
+          </Text>
+          <Text style={{ fontSize: 18, fontWeight: "700", color: theme.secondary, textAlign: "center" }}>
+            ₦{amountToPay.toLocaleString() || "0.00"}
+          </Text>
+        </View>
 
+        {/* Validate Button */}
         {loading ? (
-          <ActivityIndicator size="large" color="#1F233B" />
+          <ActivityIndicator size="large" color={theme.primary} style={{ marginTop: 20 }} />
         ) : (
-          <CustomButton
-            title="Validate"
-            onPress={validateIUC}
-            style="bg-[#1F233B]"
-          />
+          <Button text="Validate" onPress={validateIUC} fullWidth={true} />
         )}
 
-        <Modal
-          transparent
-          visible={showModal}
-          animationType="slide"
-          onRequestClose={() => setShowModal(false)}
-        >
+        {/* Confirmation Modal */}
+        <Modal transparent visible={showModal} animationType="slide" onRequestClose={() => setShowModal(false)}>
           <View
             style={{
               flex: 1,
-              backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <View className="w-80 p-6 bg-white rounded-lg shadow-lg">
-              <Text className="text-lg font-bold mb-4">
+            <View
+              style={{
+                backgroundColor: theme.white,
+                borderRadius: 16,
+                padding: 24,
+                width: "85%",
+                maxWidth: 400,
+              }}
+            >
+              <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 16, color: theme.secondary }}>
                 Transaction Details
               </Text>
-              <Text>TV Provider: {selectedTvType}</Text>
-              {/* <Text>Plan: {planTitle}</Text> */}
-              <Text>IUC Name: {iucName}</Text>
-              <Text>IUC Number: {smartCardNumber}</Text>
-              <Text>Amount: ₦{amountToPay}</Text>
 
-              <TouchableOpacity
-                className="mt-4 px-4 py-2 bg-[#1F233B] rounded-lg"
-                onPress={handlePurchase}
-              >
-                <Text className="text-white text-center">Proceed</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="mt-4 px-4 py-2 bg-gray-300 rounded-lg"
-                onPress={() => setShowModal(false)}
-              >
-                <Text className="text-black text-center">Cancel</Text>
-              </TouchableOpacity>
+              <View style={{ gap: 8, marginBottom: 24 }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text style={{ color: theme.textLight }}>TV Provider:</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>{selectedTvType}</Text>
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text style={{ color: theme.textLight }}>Plan:</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>{planTitle}</Text>
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text style={{ color: theme.textLight }}>IUC Name:</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>{iucName}</Text>
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text style={{ color: theme.textLight }}>IUC Number:</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>{smartCardNumber}</Text>
+                </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text style={{ color: theme.textLight }}>Amount:</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>₦{amountToPay.toLocaleString()}</Text>
+                </View>
+              </View>
+
+              <View style={{ gap: 12 }}>
+                <Button text="Proceed" onPress={handlePurchase} loading={loading} fullWidth={true} />
+                <Button text="Cancel" variant="outline" onPress={() => setShowModal(false)} fullWidth={true} />
+              </View>
             </View>
           </View>
         </Modal>
-
-        {/* {showReceipt && (
-        <PDFReceipt
-          show={showReceipt}
-          onHide={() => setShowReceipt(false)}
-          transactionDetails={transactionDetails}
-        />
-      )} */}
       </ScrollView>
+
+      <Header toggleSidebar={() => setSidebarVisible(!sidebarVisible)} reloadData={onRefresh} logout={handleLogout} />
       <Footer />
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default CableTvScreen;
+export default CableTvScreen
