@@ -404,9 +404,12 @@ const HomeScreen = () => {
 
           {/* Payment List */}
           <View className="mb-2">
-            {/* <Text className="text-lg font-bold text-theme-secondary mb-4">
-              Payment List
-            </Text> */}
+             {/* <View className="flex-row items-center justify-between mb-4">
+              <Text className="text-lg font-bold text-theme-secondary">Services</Text>
+              <TouchableOpacity>
+                <Text className="text-theme-primary font-medium">See all</Text>
+              </TouchableOpacity>
+            </View> */}
             <View className="flex-row flex-wrap">
               {/* Main Services */}
               {mainServices.map((service, index) => (
@@ -573,7 +576,7 @@ const HomeScreen = () => {
           onRequestClose={() => setShowFundWalletModal(false)}
         >
           <View className="flex-1 bg-black/50 justify-center items-center">
-            <View className="bg-white rounded-3xl p-6 w-4/5 max-w-sm gap-4">
+            <View className="bg-white rounded-3xl p-6 w-4/5 max-w-sm">
               <FundWalletTypes />
               <Button
                 style={{ marginTop: 20 }}
