@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,19 +11,19 @@ import {
   SafeAreaView,
   RefreshControl,
   Share,
-} from "react-native"
-import { Picker } from "@react-native-picker/picker"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useNavigation } from "@react-navigation/native"
-import { useForm, Controller } from "react-hook-form"
-import Sidebar from "../components/Sidebar"
-import Header from "../components/Header"
-import Footer from "../components/Footer"
-import accountServices from "../services/auth.services"
-import vasServices from "../services/vasServices"
-import Button from "../components/ui/Button"
-import Input from "../components/ui/Input"
-import { theme } from "../utils/theme"
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { useForm, Controller } from "react-hook-form";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import accountServices from "../services/auth.services";
+import vasServices from "../services/vasServices";
+import Button from "../components/ui/Button";
+import Input from "../components/ui/Input";
+import { theme } from "../utils/theme";
 
 const DataScreen = () => {
   const { control, handleSubmit, watch, setValue } = useForm({
@@ -32,123 +32,127 @@ const DataScreen = () => {
       plan: "",
       mobile_number: "",
     },
-  })
+  });
 
-  const [refreshing, setRefreshing] = useState(false)
-  const [sidebarVisible, setSidebarVisible] = useState(false)
-  const [selectedNetwork, setSelectedNetwork] = useState("")
-  const [selectedPlanId, setSelectedPlanId] = useState("")
-  const [selectedPlanName, setSelectedPlanName] = useState("")
-  const [dataplan, setDataPlan] = useState([])
-  const [filteredPlans, setFilteredPlans] = useState([])
-  const [amountToPay, setAmountToPay] = useState(0)
-  const [loading, setLoading] = useState(false)
-  const [showModal, setShowModal] = useState(false)
-  const [showReceiptModal, setShowReceiptModal] = useState(false)
-  const [message, setMessage] = useState("")
+  const [refreshing, setRefreshing] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState("");
+  const [selectedPlanId, setSelectedPlanId] = useState("");
+  const [selectedPlanName, setSelectedPlanName] = useState("");
+  const [dataplan, setDataPlan] = useState([]);
+  const [filteredPlans, setFilteredPlans] = useState([]);
+  const [amountToPay, setAmountToPay] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [message, setMessage] = useState("");
   const [transactionDetails, setTransactionDetails] = useState({
     planTitle: "",
     mobile_number: "",
     amount: 0,
     status: "",
-  })
-  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" })
-  const navigation = useNavigation()
+  });
+  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
+  const navigation = useNavigation();
 
   useEffect(() => {
-    fetchWalletDetails()
-  }, [])
+    fetchWalletDetails();
+  }, []);
 
   const fetchWalletDetails = async () => {
     try {
-      const walletResult = await accountServices.walletBalance()
+      const walletResult = await accountServices.walletBalance();
       const walletDetails = {
         balance: walletResult.Wallet?.amount || 0,
         name: walletResult.Profile?.firstname || "",
         lastname: walletResult.Profile?.lastname || "",
-      }
-      setWallet(walletDetails)
+      };
+      setWallet(walletDetails);
     } catch (error) {
-      console.error("Error fetching wallet details:", error)
-      setMessage("Failed to load wallet details. Please try again.")
+      console.error("Error fetching wallet details:", error);
+      setMessage("Failed to load wallet details. Please try again.");
     }
-  }
+  };
 
   const fetchDataPlan = async (network) => {
     try {
-      setLoading(true)
-      const data = { serviceID: network }
-      const response = await vasServices.allDataPlans(data)
+      setLoading(true);
+      const data = { serviceID: network };
+      const response = await vasServices.allDataPlans(data);
 
       if (!response.variations || !Array.isArray(response.variations)) {
-        throw new Error("Invalid data format received from API")
+        throw new Error("Invalid data format received from API");
       }
 
-      setDataPlan(response.variations)
-      setFilteredPlans(response.variations)
+      setDataPlan(response.variations);
+      setFilteredPlans(response.variations);
     } catch (error) {
-      console.error("Error fetching data plans:", error)
-      setMessage("Failed to load data plans. Please try again.")
-      Alert.alert("Error", "Failed to load data plans. Please try again.")
+      console.error("Error fetching data plans:", error);
+      setMessage("Failed to load data plans. Please try again.");
+      Alert.alert("Error", "Failed to load data plans. Please try again.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.clear()
-      navigation.replace("LoginScreen")
+      await AsyncStorage.clear();
+      navigation.replace("LoginScreen");
     } catch (error) {
-      console.error("Error during logout:", error)
+      console.error("Error during logout:", error);
     }
-  }
+  };
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    fetchWalletDetails().finally(() => setRefreshing(false))
-  }, [])
+    setRefreshing(true);
+    fetchWalletDetails().finally(() => setRefreshing(false));
+  }, []);
 
   const handleNetworkChange = (networkValue) => {
-    setSelectedNetwork(networkValue)
-    setValue("network", networkValue)
-    setSelectedPlanId("")
-    setValue("plan", "")
-    setAmountToPay(0)
+    setSelectedNetwork(networkValue);
+    setValue("network", networkValue);
+    setSelectedPlanId("");
+    setValue("plan", "");
+    setAmountToPay(0);
 
     if (networkValue) {
-      fetchDataPlan(networkValue)
+      fetchDataPlan(networkValue);
     } else {
-      setFilteredPlans([])
+      setFilteredPlans([]);
     }
-  }
+  };
 
   const handlePlanChange = (variationCode) => {
-    setSelectedPlanId(variationCode)
-    setValue("plan", variationCode)
+    setSelectedPlanId(variationCode);
+    setValue("plan", variationCode);
 
-    const selectedPlan = filteredPlans.find((plan) => plan.variation_code === variationCode)
+    const selectedPlan = filteredPlans.find(
+      (plan) => plan.variation_code === variationCode
+    );
 
     if (selectedPlan) {
-      setSelectedPlanName(selectedPlan.name)
-      const calculatedAmount = Math.ceil(Number.parseFloat(selectedPlan.variation_amount))
-      setAmountToPay(calculatedAmount)
+      setSelectedPlanName(selectedPlan.name);
+      const calculatedAmount = Math.ceil(
+        Number.parseFloat(selectedPlan.variation_amount)
+      );
+      setAmountToPay(calculatedAmount);
     } else {
-      setSelectedPlanName("")
-      setAmountToPay(0)
+      setSelectedPlanName("");
+      setAmountToPay(0);
     }
-  }
+  };
 
   const onSubmit = (data) => {
     if (!selectedNetwork || !selectedPlanId || !data.mobile_number) {
-      Alert.alert("Error", "Please fill all fields.")
-      return
+      Alert.alert("Error", "Please fill all fields.");
+      return;
     }
 
     if (wallet.balance < amountToPay) {
-      setMessage("Insufficient balance")
-      Alert.alert("Error", "Insufficient balance.")
-      return
+      setMessage("Insufficient balance");
+      Alert.alert("Error", "Insufficient balance.");
+      return;
     }
 
     setTransactionDetails({
@@ -156,23 +160,23 @@ const DataScreen = () => {
       mobile_number: data.mobile_number,
       amount: amountToPay,
       status: "",
-    })
+    });
 
-    setShowModal(true)
-  }
+    setShowModal(true);
+  };
 
   const handlePurchase = async () => {
-    setLoading(true)
-    setShowModal(false)
+    setLoading(true);
+    setShowModal(false);
 
-    const now = new Date()
+    const now = new Date();
     const request_id =
       now.getFullYear().toString() +
       String(now.getMonth() + 1).padStart(2, "0") +
       String(now.getDate()).padStart(2, "0") +
       String(now.getHours()).padStart(2, "0") +
       String(now.getMinutes()).padStart(2, "0") +
-      String(now.getSeconds()).padStart(2, "0")
+      String(now.getSeconds()).padStart(2, "0");
 
     const data = {
       request_id,
@@ -182,40 +186,40 @@ const DataScreen = () => {
       name: selectedPlanName,
       phone: watch("mobile_number"),
       amount: amountToPay,
-    }
+    };
 
     try {
-      const response = await vasServices.dataBundle(data)
+      const response = await vasServices.dataBundle(data);
 
       if (response === "TRANSACTION SUCCESSFUL") {
-        setMessage("Transaction successful")
-        await fetchWalletDetails()
+        setMessage("Transaction successful");
+        await fetchWalletDetails();
         setTransactionDetails({
           ...transactionDetails,
           status: "Success",
-        })
+        });
       } else {
-        setMessage("Transaction failed, Try again.")
+        setMessage("Transaction failed, Try again.");
         setTransactionDetails({
           ...transactionDetails,
           status: "Failed",
-        })
+        });
       }
 
-      setShowReceiptModal(true)
+      setShowReceiptModal(true);
     } catch (error) {
-      console.error("Error occurred during transaction:", error)
-      setMessage("Transaction failed, Try again.")
-      Alert.alert("Error", "Transaction failed. Please try again.")
+      console.error("Error occurred during transaction:", error);
+      setMessage("Transaction failed, Try again.");
+      Alert.alert("Error", "Transaction failed. Please try again.");
       setTransactionDetails({
         ...transactionDetails,
         status: "Failed",
-      })
-      setShowReceiptModal(true)
+      });
+      setShowReceiptModal(true);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const shareReceipt = async () => {
     try {
@@ -227,16 +231,16 @@ Phone Number: ${transactionDetails.mobile_number}
 Amount: ₦${transactionDetails.amount}
 Status: ${transactionDetails.status}
 Date: ${new Date().toLocaleString()}
-      `
+      `;
 
       await Share.share({
         message,
         title: "Data Purchase Receipt",
-      })
+      });
     } catch (error) {
-      Alert.alert("Error", "Failed to share receipt")
+      Alert.alert("Error", "Failed to share receipt");
     }
-  }
+  };
 
   const networkOptions = [
     { label: "Select Network", value: "" },
@@ -246,15 +250,25 @@ Date: ${new Date().toLocaleString()}
     { label: "9mobile", value: "etisalat-data" },
     { label: "Smile", value: "smile-direct" },
     { label: "Spectranet", value: "spectranet" },
-  ]
+  ];
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-      <Sidebar isVisible={sidebarVisible} toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout} />
+      <Sidebar
+        isVisible={sidebarVisible}
+        toggleSidebar={() => setSidebarVisible(false)}
+        logout={handleLogout}
+      />
 
       <ScrollView
         style={{ flex: 1, padding: 24 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[theme.primary]} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[theme.primary]}
+          />
+        }
       >
         {/* Header */}
         <Text
@@ -278,11 +292,15 @@ Date: ${new Date().toLocaleString()}
             marginBottom: 24,
           }}
         >
-          <Text style={{ fontSize: 18, textAlign: "center", color: theme.textLight, marginBottom: 4 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: "center",
+              color: theme.textLight,
+              marginBottom: 4,
+            }}
+          >
             Balance: ₦{wallet.balance.toLocaleString()}
-          </Text>
-          <Text style={{ fontSize: 16, textAlign: "center", color: theme.textLight }}>
-            Welcome, {wallet.name} {wallet.lastname}
           </Text>
         </View>
 
@@ -290,7 +308,9 @@ Date: ${new Date().toLocaleString()}
         {message ? (
           <View
             style={{
-              backgroundColor: message.includes("successful") ? theme.primaryFaded : "#FEE2E2",
+              backgroundColor: message.includes("successful")
+                ? theme.primaryFaded
+                : "#FEE2E2",
               padding: 16,
               borderRadius: 12,
               marginBottom: 16,
@@ -298,7 +318,9 @@ Date: ${new Date().toLocaleString()}
           >
             <Text
               style={{
-                color: message.includes("successful") ? theme.success : theme.error,
+                color: message.includes("successful")
+                  ? theme.success
+                  : theme.error,
                 textAlign: "center",
                 fontSize: 14,
               }}
@@ -309,6 +331,18 @@ Date: ${new Date().toLocaleString()}
         ) : null}
 
         {/* Network Selection */}
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: "500",
+            color: theme.text,
+            marginBottom: 6,
+            marginLeft: 16,
+            fontFamily: "Lufga",
+          }}
+        >
+          Network
+        </Text>
         <View
           style={{
             backgroundColor: theme.white,
@@ -318,9 +352,6 @@ Date: ${new Date().toLocaleString()}
             marginBottom: 16,
           }}
         >
-          <Text style={{ fontSize: 14, fontWeight: "500", color: theme.text, margin: 16, marginBottom: 8 }}>
-            Network
-          </Text>
           <Controller
             control={control}
             name="network"
@@ -328,12 +359,16 @@ Date: ${new Date().toLocaleString()}
               <Picker
                 selectedValue={value}
                 onValueChange={(itemValue) => {
-                  onChange(itemValue)
-                  handleNetworkChange(itemValue)
+                  onChange(itemValue);
+                  handleNetworkChange(itemValue);
                 }}
               >
                 {networkOptions.map((option) => (
-                  <Picker.Item key={option.value} label={option.label} value={option.value} />
+                  <Picker.Item
+                    key={option.value}
+                    label={option.label}
+                    value={option.value}
+                  />
                 ))}
               </Picker>
             )}
@@ -351,11 +386,25 @@ Date: ${new Date().toLocaleString()}
               marginBottom: 16,
             }}
           >
-            <Text style={{ fontSize: 14, fontWeight: "500", color: theme.text, margin: 16, marginBottom: 8 }}>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "500",
+                color: theme.text,
+                marginBottom: 6,
+                marginLeft: 16,
+                marginTop: 16,
+                fontFamily: "Lufga",
+              }}
+            >
               Plan
             </Text>
             {loading ? (
-              <ActivityIndicator size="small" color={theme.primary} style={{ margin: 16 }} />
+              <ActivityIndicator
+                size="small"
+                color={theme.primary}
+                style={{ margin: 16 }}
+              />
             ) : (
               <Controller
                 control={control}
@@ -364,13 +413,17 @@ Date: ${new Date().toLocaleString()}
                   <Picker
                     selectedValue={value}
                     onValueChange={(itemValue) => {
-                      onChange(itemValue)
-                      handlePlanChange(itemValue)
+                      onChange(itemValue);
+                      handlePlanChange(itemValue);
                     }}
                   >
                     <Picker.Item label="Select Plan" value="" />
                     {filteredPlans
-                      .sort((a, b) => Number.parseFloat(a.variation_amount) - Number.parseFloat(b.variation_amount))
+                      .sort(
+                        (a, b) =>
+                          Number.parseFloat(a.variation_amount) -
+                          Number.parseFloat(b.variation_amount)
+                      )
                       .map((plan) => (
                         <Picker.Item
                           key={plan.variation_code}
@@ -402,31 +455,63 @@ Date: ${new Date().toLocaleString()}
         />
 
         {/* Amount Display */}
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: "500",
+            color: theme.text,
+            marginBottom: 6,
+            marginLeft: 16,
+            fontFamily: "Lufga",
+          }}
+        >
+          Amount
+        </Text>
         <View
           style={{
             backgroundColor: theme.white,
-            borderRadius: 12,
+            borderRadius: 8,
             borderWidth: 1,
             borderColor: theme.border,
-            padding: 16,
+            padding: 10,
             marginBottom: 24,
           }}
         >
-          <Text style={{ fontSize: 14, fontWeight: "500", color: theme.text, marginBottom: 8 }}>Amount to Pay</Text>
-          <Text style={{ fontSize: 18, fontWeight: "700", color: theme.secondary, textAlign: "center" }}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "500",
+              color: theme.secondary,
+              textAlign: "end",
+              marginLeft: 6,
+            }}
+          >
             ₦{amountToPay.toLocaleString() || "0.00"}
           </Text>
         </View>
 
         {/* Buy Button */}
         {loading ? (
-          <ActivityIndicator size="large" color={theme.primary} style={{ marginTop: 20 }} />
+          <ActivityIndicator
+            size="large"
+            color={theme.primary}
+            style={{ marginTop: 20 }}
+          />
         ) : (
-          <Button text="Buy Now" onPress={handleSubmit(onSubmit)} fullWidth={true} />
+          <Button
+            text="Buy Now"
+            onPress={handleSubmit(onSubmit)}
+            fullWidth={true}
+          />
         )}
 
         {/* Confirmation Modal */}
-        <Modal transparent visible={showModal} animationType="slide" onRequestClose={() => setShowModal(false)}>
+        <Modal
+          transparent
+          visible={showModal}
+          animationType="slide"
+          onRequestClose={() => setShowModal(false)}
+        >
           <View
             style={{
               flex: 1,
@@ -444,17 +529,34 @@ Date: ${new Date().toLocaleString()}
                 maxWidth: 400,
               }}
             >
-              <Text style={{ fontSize: 18, fontWeight: "700", marginBottom: 16, color: theme.secondary }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  marginBottom: 16,
+                  color: theme.secondary,
+                }}
+              >
                 Transaction Details
               </Text>
               <Text style={{ marginBottom: 16, color: theme.text }}>
-                You're about to buy {transactionDetails.planTitle} - ₦{amountToPay} to{" "}
-                {transactionDetails.mobile_number}
+                You're about to buy {transactionDetails.planTitle} - ₦
+                {amountToPay} to {transactionDetails.mobile_number}
               </Text>
 
               <View style={{ gap: 12 }}>
-                <Button text="Proceed" onPress={handlePurchase} loading={loading} fullWidth={true} />
-                <Button text="Cancel" variant="outline" onPress={() => setShowModal(false)} fullWidth={true} />
+                <Button
+                  text="Proceed"
+                  onPress={handlePurchase}
+                  loading={loading}
+                  fullWidth={true}
+                />
+                <Button
+                  text="Cancel"
+                  variant="outline"
+                  onPress={() => setShowModal(false)}
+                  fullWidth={true}
+                />
               </View>
             </View>
           </View>
@@ -497,51 +599,92 @@ Date: ${new Date().toLocaleString()}
               </Text>
 
               <View style={{ gap: 12, marginBottom: 24 }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text style={{ color: theme.textLight }}>Plan:</Text>
-                  <Text style={{ fontWeight: "600", color: theme.text }}>{transactionDetails.planTitle}</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>
+                    {transactionDetails.planTitle}
+                  </Text>
                 </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text style={{ color: theme.textLight }}>Phone Number:</Text>
-                  <Text style={{ fontWeight: "600", color: theme.text }}>{transactionDetails.mobile_number}</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>
+                    {transactionDetails.mobile_number}
+                  </Text>
                 </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text style={{ color: theme.textLight }}>Amount:</Text>
-                  <Text style={{ fontWeight: "600", color: theme.text }}>₦{transactionDetails.amount}</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>
+                    ₦{transactionDetails.amount}
+                  </Text>
                 </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text style={{ color: theme.textLight }}>Status:</Text>
                   <Text
                     style={{
                       fontWeight: "600",
-                      color: transactionDetails.status === "Success" ? theme.success : theme.error,
+                      color:
+                        transactionDetails.status === "Success"
+                          ? theme.success
+                          : theme.error,
                     }}
                   >
                     {transactionDetails.status}
                   </Text>
                 </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Text style={{ color: theme.textLight }}>Date:</Text>
-                  <Text style={{ fontWeight: "600", color: theme.text }}>{new Date().toLocaleString()}</Text>
+                  <Text style={{ fontWeight: "600", color: theme.text }}>
+                    {new Date().toLocaleString()}
+                  </Text>
                 </View>
               </View>
 
-              <View style={{ flexDirection: "row", gap: 12 }}>
-                <Button text="Share" onPress={shareReceipt} variant="outline" fullWidth={true} />
+              <View style={{ flexDirection: "column", gap: 12 }}>
+                <Button
+                  text="Share"
+                  onPress={shareReceipt}
+                  variant="outline"
+                  fullWidth={true}
+                />
                 <Button
                   text="Close"
                   onPress={() => {
-                    setShowReceiptModal(false)
-                    setMessage("")
+                    setShowReceiptModal(false);
+                    setMessage("");
                     // Reset form
-                    setValue("network", "")
-                    setValue("plan", "")
-                    setValue("mobile_number", "")
-                    setSelectedNetwork("")
-                    setSelectedPlanId("")
-                    setSelectedPlanName("")
-                    setAmountToPay(0)
-                    setFilteredPlans([])
+                    setValue("network", "");
+                    setValue("plan", "");
+                    setValue("mobile_number", "");
+                    setSelectedNetwork("");
+                    setSelectedPlanId("");
+                    setSelectedPlanName("");
+                    setAmountToPay(0);
+                    setFilteredPlans([]);
                   }}
                   fullWidth={true}
                 />
@@ -551,10 +694,14 @@ Date: ${new Date().toLocaleString()}
         </Modal>
       </ScrollView>
 
-      <Header toggleSidebar={() => setSidebarVisible(!sidebarVisible)} reloadData={onRefresh} logout={handleLogout} />
+      <Header
+        toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
+        reloadData={onRefresh}
+        logout={handleLogout}
+      />
       <Footer />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default DataScreen
+export default DataScreen;

@@ -80,6 +80,18 @@ const accountServices = {
     }
   },
 
+  resendOTP: async function (email) {
+    try {
+      const response = await axios.post(`${baseUrl}account/resend-otp`, {
+        email: email,
+      });
+      return response;
+    } catch (error) {
+      console.error("Failed to resend OTP:", error);
+      throw error;
+    }
+  },
+
   // 🔐 Request Password Reset
   requestPasswordReset: async (data) => {
     try {

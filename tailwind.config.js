@@ -90,6 +90,7 @@ module.exports = {
         patriot: ["Patriot"],
         poppins: ["Poppins"],
         spaceGrotesk: ["SpaceGrotesk"],
+        pacifico: ['Pacifico', 'cursive'],
       },
       borderRadius: {
         lg: "var(--radius)",

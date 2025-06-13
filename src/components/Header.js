@@ -60,12 +60,12 @@ const Header = ({ toggleSidebar, reloadData, logout }) => {
   }
 
   const menuItems = [
-    { icon: "settings", label: "Settings", onPress: () => console.log("Settings") },
+    { icon: "settings", label: "Settings", onPress: () => navigateToScreen("ProfileSettings") },
     { icon: "help-outline", label: "Help Center", onPress: () => console.log("Help Center") },
     { icon: "lock-reset", label: "Reset Password", onPress: () => console.log("Reset Password") },
     { icon: "privacy-tip", label: "Privacy Policy", onPress: () => console.log("Privacy Policy") },
     { icon: "description", label: "Terms & Conditions", onPress: () => console.log("Terms & Conditions") },
-    { icon: "logout", label: "Log Out", onPress: logout },
+    { icon: "logout", label: "Log Out", onPress: () => navigateToScreen("LoginScreen") },
   ]
 
   // Navigation items with screen name mapping
@@ -77,14 +77,14 @@ const Header = ({ toggleSidebar, reloadData, logout }) => {
       onPress: () => navigateToScreen("Home"),
     },
     {
-      name: "Wallet",
-      screenNames: ["Airtime", "Airtime"],
+      name: "Services",
+      screenNames: ["Airtime", "Data", "Electricity", "TV", "JAMB", "WAEC"],
       icon: "account-balance-wallet",
       onPress: () => navigateToScreen("Home"),
     },
     {
       name: "Profile",
-      screenNames: ["ProfileSettings", "ProfileSettings"],
+      screenNames: ["ProfileSettings", "ProfileSettingsScreen", "History", "TransactionHistory"],
       icon: "person",
       onPress: () => navigateToScreen("ProfileSettings"),
     },
@@ -109,10 +109,11 @@ const Header = ({ toggleSidebar, reloadData, logout }) => {
           justifyContent: isActive ? "flex-start" : "center",
           flex: isActive ? 1 : 0,
           maxWidth: isActive ? 120 : 44,
+          marginHorizontal: 2,
         }}
       >
         <Icon name={item.icon} size={24} color={theme.white} />
-        {isActive && (
+        {isActive  && (
           <Text
             style={{
               color: theme.white,
@@ -128,6 +129,9 @@ const Header = ({ toggleSidebar, reloadData, logout }) => {
       </TouchableOpacity>
     )
   }
+
+  // Add a fallback check to ensure the component renders properly
+  const hasActiveItem = navigationItems.some((item) => item.screenNames.includes(currentScreen))
 
   return (
     <Animated.View
@@ -159,6 +163,27 @@ const Header = ({ toggleSidebar, reloadData, logout }) => {
         >
           {/* Navigation Items */}
           {navigationItems.map(renderNavigationItem)}
+
+          {/* Show current screen name if not in navigation items */}
+          {!hasActiveItem && (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.white,
+                  fontSize: 16,
+                  fontWeight: "500",
+                }}
+              >
+                {currentScreen}
+              </Text>
+            </View>
+          )}
 
           {/* Menu Toggle Button */}
           <TouchableOpacity

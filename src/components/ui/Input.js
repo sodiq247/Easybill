@@ -43,6 +43,7 @@ const Input = ({
             fontWeight: "500",
             color: theme.text,
             marginBottom: 6,
+            marginLeft: 16,
             fontFamily: "Lufga",
           }}
         >

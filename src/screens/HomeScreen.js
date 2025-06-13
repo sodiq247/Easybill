@@ -1,70 +1,90 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, RefreshControl, Modal, StatusBar } from "react-native"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useNavigation } from "@react-navigation/native"
-import FundWalletTypes from "../components/FundWalletTypes"
-import Header from "../components/Header"
-import Footer from "../components/Footer"
-import Icon from "react-native-vector-icons/MaterialIcons"
-import accountServices from "../services/auth.services"
-import vasServices from "../services/vasServices"
-import Button from "../components/ui/Button"
-import { theme } from "../utils/theme"
-// Remove this import
-// import AppBackground from "../components/AppBackground"
+import { useState, useEffect, useCallback } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  SafeAreaView,
+  RefreshControl,
+  Modal,
+  StatusBar,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import FundWalletTypes from "../components/FundWalletTypes";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import accountServices from "../services/auth.services";
+import vasServices from "../services/vasServices";
+import Button from "../components/ui/Button";
 
 const HomeScreen = () => {
-  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" })
-  const [transactions, setTransactions] = useState([])
-  const [refreshing, setRefreshing] = useState(false)
-  const [sidebarVisible, setSidebarVisible] = useState(false)
-  const [showFundWalletModal, setShowFundWalletModal] = useState(false)
-  const navigation = useNavigation()
-  const [isPaymentListExpanded, setIsPaymentListExpanded] = useState(false)
+  const [wallet, setWallet] = useState({ balance: 0, name: "", lastname: "" });
+  const [transactions, setTransactions] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [showFundWalletModal, setShowFundWalletModal] = useState(false);
+  const [balanceVisible, setBalanceVisible] = useState(true);
+  const navigation = useNavigation();
+  const [isPaymentListExpanded, setIsPaymentListExpanded] = useState(false);
 
   const fetchWalletDetails = async () => {
     try {
-      const walletResult = await accountServices.walletBalance()
+      const walletResult = await accountServices.walletBalance();
       const walletDetails = {
         balance: walletResult.Wallet?.amount || 0,
         name: walletResult.Profile?.firstname || "",
         lastName: walletResult.Profile?.lastname || "",
-      }
-      setWallet(walletDetails)
+      };
+      setWallet(walletDetails);
     } catch (error) {
-      console.error("Error fetching wallet details:", error)
+      console.error("Error fetching wallet details:", error);
     }
-  }
+  };
 
   const fetchTransactions = async () => {
     try {
-      const response = await vasServices.getTransaction()
-      const transactionData = response.data.data || []
+      const response = await vasServices.getTransaction();
+      const transactionData = response.data.data || [];
 
       // Sort transactions by date (newest first)
       const sortedTransactions = transactionData.sort((a, b) => {
-        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-      })
+        return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      });
 
-      setTransactions(sortedTransactions)
+      setTransactions(sortedTransactions);
     } catch (error) {
-      console.error("Error fetching transactions:", error)
+      console.error("Error fetching transactions:", error);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchWalletDetails()
-    fetchTransactions()
-  }, [])
+    fetchWalletDetails();
+    fetchTransactions();
+  }, []);
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true)
+    setRefreshing(true);
     Promise.all([fetchWalletDetails(), fetchTransactions()]).finally(() => {
-      setRefreshing(false)
-    })
-  }, [])
+      setRefreshing(false);
+    });
+  }, []);
+
+  // Function to toggle balance visibility
+  const toggleBalanceVisibility = () => {
+    setBalanceVisible(!balanceVisible);
+  };
+
+  // Function to format balance display
+  const formatBalance = (balance) => {
+    if (!balanceVisible) {
+      return "****";
+    }
+    return `₦${balance.toLocaleString()}`;
+  };
 
   const mainServices = [
     {
@@ -77,7 +97,7 @@ const HomeScreen = () => {
       name: "Data",
       icon: "wifi",
       description: "Buy affordable data plans.",
-      iconColor: theme.accent,
+      iconColor: "#4ECDC4",
     },
     {
       name: "Electricity",
@@ -85,7 +105,7 @@ const HomeScreen = () => {
       description: "Pay electricity bills.",
       iconColor: "#45B7D1",
     },
-  ]
+  ];
 
   const additionalServices = [
     {
@@ -98,251 +118,380 @@ const HomeScreen = () => {
       name: "JAMB",
       icon: "school",
       description: "Purchase JAMB pins.",
-      iconColor: theme.warning,
+      iconColor: "#F39C12",
     },
     {
       name: "WAEC",
       icon: "assignment",
       description: "Buy WAEC scratch cards.",
-      iconColor: theme.error,
+      iconColor: "#E74C3C",
     },
-    {
-      name: "Fund Wallet",
-      icon: "account-balance-wallet",
-      description: "Fund Your Wallet",
-      iconColor: theme.primary,
-    },
-  ]
+    // {
+    //   name: "Fund Wallet",
+    //   icon: "account-balance-wallet",
+    //   description: "Fund Your Wallet",
+    //   iconColor: "#FD7C0E",
+    // },
+  ];
+
+  // Professional promotions data
+const promotions = [
+  {
+    id: 1,
+    title: "Get 5% Cashback",
+    subtitle: "On all data purchases",
+    description:
+      "Purchase any data bundle and get 5% cashback instantly credited to your wallet",
+    bgColor: "bg-[#45B7D1]", // Blue shade
+    icon: "wifi",
+    iconColor: "#45B7D1",
+    badge: "LIMITED TIME",
+    badgeColor: "bg-yellow-400",
+    offer: "5% BACK",
+  },
+  {
+    id: 2,
+    title: "Free Airtime Bonus",
+    subtitle: "Buy ₦1000, Get ₦100 Free",
+    description:
+      "Purchase airtime worth ₦1000 or more and get ₦100 bonus airtime instantly",
+    bgColor: "bg-[#34A853]", // Green shade replacing gradient
+    icon: "phone",
+    iconColor: "#34A853",
+    badge: "HOT DEAL",
+    badgeColor: "bg-red-500",
+    offer: "₦100 FREE",
+  },
+  {
+    id: 3,
+    title: "Electricity Bill Discount",
+    subtitle: "Save 3% on all payments",
+    description:
+      "Pay your electricity bills through vaaPay and save 3% on every transaction",
+    bgColor: "bg-[#A55EEA]", // Purple shade replacing gradient
+    icon: "flash-on",
+    iconColor: "bg-[#A55EEA]",
+    badge: "ONGOING",
+    badgeColor: "bg-theme-primary",
+    offer: "3% OFF",
+  },
+  {
+    id: 4,
+    title: "TV Subscription Rewards",
+    subtitle: "Earn points on every payment",
+    description:
+      "Pay for DSTV, GOTV subscriptions and earn reward points for future discounts",
+    bgColor: "bg-[#4B0082]", // Indigo shade replacing gradient
+    icon: "tv",
+    iconColor: "bg-[#4B0082]",
+    badge: "NEW",
+    badgeColor: "bg-green-500",
+    offer: "EARN POINTS",
+  },
+];
 
   const getTransactionIcon = (description) => {
-    if (description?.toLowerCase().includes("data")) return "wifi"
-    if (description?.toLowerCase().includes("airtime")) return "phone"
-    if (description?.toLowerCase().includes("electricity")) return "flash-on"
-    if (description?.toLowerCase().includes("dstv")) return "tv"
-    if (description?.toLowerCase().includes("jamb")) return "school"
-    if (description?.toLowerCase().includes("waec")) return "assignment"
-    if (description?.toLowerCase().includes("wallet")) return "account-balance-wallet"
-    return "receipt"
-  }
+    if (description?.toLowerCase().includes("data")) return "wifi";
+    if (description?.toLowerCase().includes("airtime")) return "phone";
+    if (description?.toLowerCase().includes("electricity")) return "flash-on";
+    if (description?.toLowerCase().includes("dstv")) return "tv";
+    if (description?.toLowerCase().includes("jamb")) return "school";
+    if (description?.toLowerCase().includes("waec")) return "assignment";
+    if (description?.toLowerCase().includes("wallet"))
+      return "account-balance-wallet";
+    return "receipt";
+  };
 
   const getTransactionIconColor = (description) => {
-    if (description?.toLowerCase().includes("data")) return theme.accent
-    if (description?.toLowerCase().includes("airtime")) return "#FF6B6B"
-    if (description?.toLowerCase().includes("electricity")) return "#45B7D1"
-    if (description?.toLowerCase().includes("dstv")) return "#9B59B6"
-    if (description?.toLowerCase().includes("jamb")) return theme.warning
-    if (description?.toLowerCase().includes("waec")) return theme.error
-    if (description?.toLowerCase().includes("wallet")) return theme.primary
-    return "#95A5A6"
-  }
+    if (description?.toLowerCase().includes("data")) return "#4ECDC4";
+    if (description?.toLowerCase().includes("airtime")) return "#FF6B6B";
+    if (description?.toLowerCase().includes("electricity")) return "#45B7D1";
+    if (description?.toLowerCase().includes("dstv")) return "#9B59B6";
+    if (description?.toLowerCase().includes("jamb")) return "#F39C12";
+    if (description?.toLowerCase().includes("waec")) return "#E74C3C";
+    if (description?.toLowerCase().includes("wallet")) return "#FD7C0E";
+    return "#95A5A6";
+  };
 
   const formatAmount = (amount) => {
-    const numAmount = Number.parseFloat(amount) || 0
-    return numAmount >= 0 ? `+₦${numAmount.toLocaleString()}` : `-₦${Math.abs(numAmount).toLocaleString()}`
-  }
+    const numAmount = Number.parseFloat(amount) || 0;
+    return numAmount >= 0
+      ? `+₦${numAmount.toLocaleString()}`
+      : `-₦${Math.abs(numAmount).toLocaleString()}`;
+  };
 
   const formatDateTime = (dateString) => {
-    if (!dateString) return "Unknown"
-    const date = new Date(dateString)
+    if (!dateString) return "Unknown";
+    const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   const renderTransactionItem = (item, index) => (
-    <View key={index} className="flex-row items-center bg-theme-primaryFaded rounded-2xl p-4 mb-1.5">
+    <View
+      key={index}
+      className="flex-row items-center bg-theme-primaryFaded rounded-2xl px-4 py-3 mb-1.5"
+    >
       <View
+        className="w-8 h-6 rounded-2xl items-center justify-center mr-4"
         style={{
-          width: 32,
-          height: 32,
-          borderRadius: 16,
-          alignItems: "center",
-          justifyContent: "center",
-          marginRight: 16,
           backgroundColor: `${getTransactionIconColor(item.description)}20`,
         }}
       >
-        <Icon name={getTransactionIcon(item.description)} size={24} color={getTransactionIconColor(item.description)} />
+        <Icon
+          name={getTransactionIcon(item.description)}
+          size={24}
+          color={getTransactionIconColor(item.description)}
+        />
       </View>
-      <View style={{ flex: 1 }}>
-        <Text
-          style={{
-            fontSize: 14,
-            fontWeight: "600",
-            color: theme.secondary,
-            marginBottom: 4,
-          }}
-        >
+      <View className="flex-1">
+        <Text className="text-sm font-semibold text-theme-secondary mb-1">
           {item.description || "Transaction"}
         </Text>
-        <Text
-          style={{
-            fontSize: 12,
-            color: theme.textFaded,
-          }}
-        >
+        <Text className="text-xs text-theme-textFaded">
           {formatDateTime(item.createdAt)}
         </Text>
       </View>
       <Text
-        style={{
-          fontSize: 16,
-          fontWeight: "700",
-          color: Number.parseFloat(item.amount) >= 0 ? theme.success : theme.error,
-        }}
+        className={`text-base font-bold ${
+          Number.parseFloat(item.amount) >= 0
+            ? "text-theme-success"
+            : "text-theme-error"
+        }`}
       >
         {formatAmount(item.amount)}
       </Text>
     </View>
-  )
+  );
+
+  const renderPromotionCard = (promotion, index) => (
+    <TouchableOpacity key={promotion.id} className="mr-4 w-72">
+      <View
+        className={`${promotion.bgColor} rounded-2xl p-5 relative overflow-hidden`}
+      >
+        {/* Badge */}
+        <View
+          className={`${promotion.badgeColor} px-3 py-1 rounded-full self-start mb-3`}
+        >
+          <Text className="text-xs font-bold text-white">
+            {promotion.badge}
+          </Text>
+        </View>
+
+        {/* Content */}
+        <View className="flex-row items-start justify-between ">
+          <View className="flex-1 pr-4">
+            <Text className="text-xl font-bold text-white mb-1">
+              {/* {promotion.title} */}
+              Coming soon...
+            </Text>
+            <Text className="text-base text-white opacity-90 mb-2">
+              {/* {promotion.subtitle} */}
+               Coming soon...
+            </Text>
+            <Text className="hidden text-sm text-white opacity-80 leading-5 mb-3">
+              {/* {promotion.description} */}
+               Coming soon...
+            </Text>
+
+            {/* Offer Highlight */}
+            <View className="hidden bg-white bg-opacity-20 rounded-lg px-3 py-2 self-start">
+              <Text className="text-white font-bold text-sm">
+                {/* {promotion.offer} */}
+                 Coming soon...
+              </Text>
+            </View>
+          </View>
+
+          {/* Icon */}
+          <View className="bg-white bg-opacity-20 rounded-2xl p-3 hidden">
+            <Icon name={promotion.icon} size={28} color={promotion.iconColor} />
+          </View>
+        </View>
+
+        {/* Action Button */}
+        <TouchableOpacity className=" bg-white bg-opacity-20 rounded-xl py-2 px-4 mt-4 self-start">
+          <Text className={`text-${promotion.bgColor}  font-semibold text-sm`}>Learn More</Text>
+        </TouchableOpacity>
+
+        {/* Decorative Elements */}
+        <View className="absolute -right-4 -top-4 w-20 h-20 bg-white bg-opacity-10 rounded-full" />
+        <View className="hidden absolute -right-8 -bottom-8 w-24 h-24 bg-white bg-opacity-5 rounded-full" />
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
-    // In the return statement, replace:
-    // <AppBackground>
-    //   <SafeAreaView style={{ flex: 1 }}>
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar barStyle="dark-content" backgroundColor={theme.background} />
+    <View className="flex-1 bg-theme-background">
+      <SafeAreaView className="flex-1">
+        <StatusBar barStyle="dark-content" backgroundColor="#F8F8FF" />
+        {/* App Header with Logo */}
+        <View className="flex-row items-center justify-between px-4 py-1 bg-theme-background">
+          <View className="flex-row items-center">
+            <View className="w-8 h-8 rounded-[10px] bg-theme-primary items-center justify-center mr-0.5">
+              <Text className="text-white text-2xl font-bold">V</Text>
+            </View>
+            <Text className="text-xl font-bold text-theme-secondary">
+              aaPay
+            </Text>
+          </View>
 
-        {/* Fixed Content */}
-        <View style={{ flex: 1, paddingHorizontal: 16 }}>
+          {/* Notification Icon */}
+          <View className="flex-row items-center gap-2">
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ProfileSettings")}
+              className="items-center justify-center"
+            >
+              <Text className=" text-base text-theme-textLight my-1 text-right">
+                Hi, {wallet.lastName}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity className="w-10 h-10 rounded-full bg-theme-primaryFaded items-center justify-center">
+              <Icon name="notifications-none" size={20} color="#FD7C0E" />
+            </TouchableOpacity>
+            {/* <TouchableOpacity
+              onPress={() => navigation.navigate("ProfileSettings")}
+              className="w-10 h-10 rounded-full bg-theme-primaryFaded items-center justify-center"
+            >
+              <Icon name="person" size={20} color="#FD7C0E" />
+            </TouchableOpacity> */}
+          </View>
+        </View>
+        <View className="flex-1 px-4">
           {/* Balance Card */}
-          <View
-            style={{
-              backgroundColor: theme.secondary,
-              borderRadius: 24,
-              padding: 24,
-              marginBottom: 24,
-              marginTop: 16,
-            }}
-          >
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-              <View>
-                <Text style={{ color: theme.gray[400], fontSize: 14, marginBottom: 4 }}>Your Balance</Text>
-                <Text style={{ color: theme.white, fontSize: 24, fontWeight: "700" }}>
-                  ₦{wallet.balance.toLocaleString()}
+          <View className="bg-theme-secondary rounded-2xl px-6 py-4 mb-4 mt-4">
+            <View className="flex-row items-center justify-between mb-4">
+              <View className="flex-row items-center">
+                <Text className="text-gray-400 text-sm mr-2">
+                  Wallet Balance
                 </Text>
+                <TouchableOpacity onPress={toggleBalanceVisibility}>
+                  <Icon
+                    name={balanceVisible ? "visibility" : "visibility-off"}
+                    size={18}
+                    color="#9CA3AF"
+                  />
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={() => navigation.navigate("ProfileSettings")}>
-                <View style={{ alignItems: "center" }}>
-                  <View
-                    style={{
-                      backgroundColor: theme.primaryFaded,
-                      borderRadius: 20,
-                      padding: 8,
-                      marginBottom: 4,
-                    }}
-                  >
-                    <Icon name="person" size={24} color={theme.primary} />
-                  </View>
-                  <Text style={{ color: theme.white, fontSize: 12, fontWeight: "500" }}>Hi, {wallet.lastName}</Text>
-                </View>
+              <TouchableOpacity onPress={() => navigation.navigate("History")}>
+                <Text className="text-theme-primary text-sm font-semibold">
+                  Transaction History
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <View className="flex-row items-center justify-between">
+              <Text className="text-white text-2xl font-bold">
+                {formatBalance(wallet.balance)}
+              </Text>
+              <TouchableOpacity
+                onPress={() => setShowFundWalletModal(true)}
+                className="bg-theme-primary rounded-2xl px-5 py-2"
+              >
+                <Text className="text-white font-semibold text-sm">
+                  + Add Money
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Payment List */}
-          <View style={{ marginBottom: 8 }}>
-            <Text style={{ fontSize: 18, fontWeight: "700", color: theme.secondary, marginBottom: 16 }}>
+          <View className="mb-2">
+            {/* <Text className="text-lg font-bold text-theme-secondary mb-4">
               Payment List
-            </Text>
-            <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+            </Text> */}
+            <View className="flex-row flex-wrap">
               {/* Main Services */}
               {mainServices.map((service, index) => (
                 <TouchableOpacity
                   key={index}
-                  style={{ width: "25%", alignItems: "center", marginBottom: 16 }}
+                  className="w-1/4 items-center mb-4"
                   onPress={() => {
                     if (service.name === "Fund Wallet") {
-                      setShowFundWalletModal(true)
+                      setShowFundWalletModal(true);
                     } else {
-                      navigation.navigate(service.name)
+                      navigation.navigate(service.name);
                     }
                   }}
                 >
                   <View
-                    style={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: 16,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 8,
-                      backgroundColor: `${service.iconColor}20`,
-                    }}
+                    className="w-16 h-16 rounded-2xl items-center justify-center mb-2"
+                    style={{ backgroundColor: `${service.iconColor}20` }}
                   >
-                    <Icon name={service.icon} size={28} color={service.iconColor} />
+                    <Icon
+                      name={service.icon}
+                      size={28}
+                      color={service.iconColor}
+                    />
                   </View>
-                  <Text style={{ fontSize: 14, fontWeight: "500", color: theme.textLight }}>{service.name}</Text>
+                  <Text className="text-sm font-medium text-theme-textLight">
+                    {service.name}
+                  </Text>
                 </TouchableOpacity>
               ))}
 
               {/* More/Collapse Button */}
               <TouchableOpacity
-                style={{ width: "25%", alignItems: "center", marginBottom: 16 }}
+                className="w-1/4 items-center mb-4"
                 onPress={() => setIsPaymentListExpanded(!isPaymentListExpanded)}
               >
                 <View
-                  style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: 16,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 8,
-                    backgroundColor: isPaymentListExpanded ? theme.primaryFaded : theme.gray[100],
-                  }}
+                  className={`w-16 h-16 rounded-2xl items-center justify-center mb-2 ${
+                    isPaymentListExpanded
+                      ? "bg-theme-primaryFaded"
+                      : "bg-gray-100"
+                  }`}
                 >
                   <Icon
                     name={isPaymentListExpanded ? "close" : "apps"}
                     size={28}
-                    color={isPaymentListExpanded ? theme.primary : theme.gray[500]}
+                    color={isPaymentListExpanded ? "#FD7C0E" : "#64748B"}
                   />
                 </View>
                 <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "500",
-                    color: isPaymentListExpanded ? theme.primary : theme.textLight,
-                  }}
+                  className={`text-sm font-medium ${
+                    isPaymentListExpanded
+                      ? "text-theme-primary"
+                      : "text-theme-textLight"
+                  }`}
                 >
                   {isPaymentListExpanded ? "Collapse" : "More"}
                 </Text>
               </TouchableOpacity>
 
-              {/* Additional Services */}
+              {/* Additional Services (shown when expanded) */}
               {isPaymentListExpanded && (
                 <>
                   {additionalServices.map((service, index) => (
                     <TouchableOpacity
                       key={index}
-                      style={{ width: "25%", alignItems: "center", marginBottom: 16 }}
+                      className="w-1/4 items-center mb-4"
                       onPress={() => {
                         if (service.name === "Fund Wallet") {
-                          setShowFundWalletModal(true)
+                          setShowFundWalletModal(true);
                         } else {
-                          navigation.navigate(service.name)
+                          navigation.navigate(service.name);
                         }
                       }}
                     >
                       <View
-                        style={{
-                          width: 64,
-                          height: 64,
-                          borderRadius: 16,
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginBottom: 8,
-                          backgroundColor: `${service.iconColor}20`,
-                        }}
+                        className="w-16 h-16 rounded-2xl items-center justify-center mb-2"
+                        style={{ backgroundColor: `${service.iconColor}20` }}
                       >
-                        <Icon name={service.icon} size={28} color={service.iconColor} />
+                        <Icon
+                          name={service.icon}
+                          size={28}
+                          color={service.iconColor}
+                        />
                       </View>
-                      <Text style={{ fontSize: 14, fontWeight: "500", color: theme.textLight }}>{service.name}</Text>
+                      <Text className="text-sm font-medium text-theme-textLight">
+                        {service.name}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                 </>
@@ -351,67 +500,59 @@ const HomeScreen = () => {
           </View>
 
           {/* Promotions Section */}
-          <View style={{ marginBottom: 8 }}>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: "700", color: theme.secondary }}>Promotions</Text>
+          <View className="mb-2">
+            {/* <View className="flex-row items-center justify-between mb-4">
+              <Text className="text-lg font-bold text-theme-secondary">Promotions</Text>
               <TouchableOpacity>
-                <Text style={{ color: theme.primary, fontWeight: "500" }}>See all</Text>
+                <Text className="text-theme-primary font-medium">See all</Text>
               </TouchableOpacity>
-            </View>
-            <View
-              style={{
-                backgroundColor: theme.primaryFaded,
-                borderRadius: 16,
-                height: 128,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text style={{ color: theme.textLight }}>No promotions available</Text>
-            </View>
+            </View> */}
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2 ">
+              {promotions.map((promotion, index) => renderPromotionCard(promotion, index))}
+            </ScrollView>
           </View>
 
-          {/* Transactions Section */}
-          <View style={{ flex: 1 }}>
-            <View
-              style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: "700", color: theme.secondary }}>Transactions</Text>
+          {/* Transactions Section - Only this part is scrollable */}
+          <View className="flex-1">
+            <View className="flex-row items-center justify-between mb-2">
+              <Text className="text-lg font-bold text-theme-secondary">
+                Transactions
+              </Text>
               <TouchableOpacity onPress={() => navigation.navigate("History")}>
-                <Text style={{ color: theme.primary, fontWeight: "500" }}>See all</Text>
+                <Text className="text-theme-primary font-medium">See all</Text>
               </TouchableOpacity>
             </View>
 
+            {/* Scrollable Transaction List */}
             <ScrollView
-              style={{ flex: 1 }}
+              className="flex-1"
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={onRefresh}
-                  colors={[theme.primary]}
-                  tintColor={theme.primary}
+                  colors={["#FD7C0E"]}
+                  tintColor="#FD7C0E"
                 />
               }
               showsVerticalScrollIndicator={false}
             >
               {transactions.length > 0 ? (
-                <View>{transactions.slice(0, 5).map((item, index) => renderTransactionItem(item, index))}</View>
+                <View>
+                  {transactions
+                    .slice(0, 5)
+                    .map((item, index) => renderTransactionItem(item, index))}
+                </View>
               ) : (
-                <View
-                  style={{
-                    backgroundColor: theme.primaryFaded,
-                    borderRadius: 16,
-                    padding: 24,
-                    alignItems: "center",
-                  }}
-                >
-                  <Icon name="receipt-long" size={48} color={theme.primary} />
-                  <Text style={{ color: theme.textLight, marginTop: 8 }}>No transactions yet</Text>
+                <View className="bg-theme-primaryFaded rounded-2xl p-6 items-center">
+                  <Icon name="receipt-long" size={48} color="#FD7C0E" />
+                  <Text className="text-theme-textLight mt-2">
+                    No transactions yet
+                  </Text>
                 </View>
               )}
-              <View style={{ height: 40 }} />
+              {/* Add padding at the bottom to ensure content is visible above footer */}
+              <View className="h-10" />
             </ScrollView>
           </View>
         </View>
@@ -423,41 +564,32 @@ const HomeScreen = () => {
           animationType="slide"
           onRequestClose={() => setShowFundWalletModal(false)}
         >
-          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
-            <View
-              style={{
-                backgroundColor: theme.white,
-                borderRadius: 24,
-                padding: 24,
-                width: "80%",
-                maxWidth: 400,
-              }}
-            >
+          <View className="flex-1 bg-black/50 justify-center items-center">
+            <View className="bg-white rounded-3xl p-6 w-4/5 max-w-sm">
               <FundWalletTypes />
-              <Button text="Cancel" variant="outline" onPress={() => setShowFundWalletModal(false)} fullWidth={true} />
+              <Button
+                text="Cancel"
+                variant="outline"
+                onPress={() => setShowFundWalletModal(false)}
+                fullWidth
+              />
             </View>
           </View>
         </Modal>
 
+        {/* Header */}
         <Header
           toggleSidebar={() => setSidebarVisible(!sidebarVisible)}
           reloadData={fetchWalletDetails}
           logout={async () => {
-            await AsyncStorage.clear()
-            navigation.replace("LoginScreen")
+            await AsyncStorage.clear();
+            navigation.replace("LoginScreen");
           }}
         />
-        <Footer />
+        {/* <Footer /> */}
       </SafeAreaView>
     </View>
-    // And at the end, replace:
-    //   </SafeAreaView>
-    // </AppBackground>
+  );
+};
 
-    // With:
-    //   </SafeAreaView>
-    // </View>
-  )
-}
-
-export default HomeScreen
+export default HomeScreen;

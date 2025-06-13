@@ -1,4 +1,4 @@
-# EasyBill
+# VaaPay
 
 A React Native bill payment app using Expo, TailwindCSS, and Nativewind.
 

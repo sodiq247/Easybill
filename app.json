@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "EasyBill",
-    "slug": "easybill",
+    "name": "VaaPay",
+    "slug": "VaaPay",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sodiq247.EasyBill",
+      "package": "com.sodiq247.VaaPay",
       "permissions": [
         "INTERNET"
       ]

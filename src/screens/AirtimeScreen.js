@@ -86,7 +86,7 @@ const AirtimeScreen = () => {
           fetchWalletDetails()
         } else {
           const errorMessage = response?.data?.result?.error?.[0] || "Transaction unsuccessful"
-          Alert.alert("Error", errorMessage)
+          Alert.alert("Error", "Transaction failed, try again.")
           setShowModal(false)
         }
       } catch (error) {
@@ -146,12 +146,19 @@ const AirtimeScreen = () => {
           <Text style={{ fontSize: 18, textAlign: "center", color: theme.textLight, marginBottom: 4 }}>
             Balance: ₦{wallet.balance.toLocaleString()}
           </Text>
-          <Text style={{ fontSize: 16, textAlign: "center", color: theme.textLight }}>
-            Welcome, {wallet.name} {wallet.lastname}
-          </Text>
         </View>
 
         {/* Network Selection */}
+        <Text style={{
+            fontSize: 14,
+            fontWeight: "500",
+            color: theme.text,
+            marginBottom: 6,
+             marginLeft: 16,
+            fontFamily: "Lufga",
+          }}>
+            Network
+          </Text>
         <View
           style={{
             backgroundColor: theme.white,
@@ -161,9 +168,7 @@ const AirtimeScreen = () => {
             marginBottom: 16,
           }}
         >
-          <Text style={{ fontSize: 14, fontWeight: "500", color: theme.text, margin: 16, marginBottom: 8 }}>
-            Select Network
-          </Text>
+          
           <Picker selectedValue={selectedNetwork} onValueChange={(itemValue) => setSelectedNetwork(itemValue)}>
             {networkOptions.map((option) => (
               <Picker.Item key={option.value} label={option.label} value={option.value} />
