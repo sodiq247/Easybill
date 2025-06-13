@@ -22,14 +22,14 @@ const FundWalletTypes = () => {
     opay: {
       accountNumber: "8105082299",
       accountName: "Abdulrazaq Sodiq",
-      bankName: "Opay",
+      bankName: "Moniepoint",
       color: theme.primary,
       icon: "account-balance",
     },
     palmpay: {
       accountNumber: "8105082299",
       accountName: "Abdulrazaq Sodiq",
-      bankName: "Palmpay",
+      bankName: "Opay",
       color: theme.accent,
       icon: "payment",
     },
@@ -150,14 +150,14 @@ Please confirm this payment.`
   return (
     <View
       style={{
-        backgroundColor: theme.white,
-        borderRadius: 16,
-        padding: 24,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 5,
+        // backgroundColor: theme.white,
+        // borderRadius: 16,
+        // padding: 24,
+        // shadowColor: "#000",
+        // shadowOffset: { width: 0, height: 2 },
+        // shadowOpacity: 0.1,
+        // shadowRadius: 8,
+        // elevation: 5,
       }}
     >
       <Text
@@ -173,7 +173,7 @@ Please confirm this payment.`
       </Text>
 
       {/* Amount Input */}
-      <View style={{ marginBottom: 24 }}>
+      <View style={{ marginBottom: 5, display: "flex", flexDirection: "column" }}>
         <Input
           value={amount}
           onChangeText={handleAmountChange}
@@ -181,12 +181,7 @@ Please confirm this payment.`
           label="Amount (₦)"
           keyboardType="numeric"
         />
-        {amount && (
-          <Text style={{ fontSize: 14, color: theme.textLight, marginTop: 8 }}>Amount: ₦{formatAmount(amount)}</Text>
-        )}
-      </View>
-
-      {/* Proceed Button */}
+        {/* Proceed Button */}
       <Button
         text="Proceed"
         onPress={handleProceed}
@@ -194,6 +189,8 @@ Please confirm this payment.`
         disabled={proceedLoading || !amount}
         fullWidth={true}
       />
+      </View>
+      
 
       {/* Payment Method Modal */}
       <Modal visible={showModal} transparent animationType="slide" onRequestClose={closeModal}>
@@ -246,7 +243,7 @@ Please confirm this payment.`
                     Amount: ₦{formatAmount(amount)}
                   </Text>
 
-                  <View style={{ gap: 16 }}>
+                  <View style={{ gap: 16, marginBottom: 24 }}>
                     <Button
                       text="Pay with Bank Transfer"
                       icon="account-balance"
@@ -367,17 +364,15 @@ Please confirm this payment.`
                       style={{
                         backgroundColor: `${theme.warning}20`,
                         borderRadius: 8,
-                        padding: 12,
-                        marginTop: 16,
+                        padding: 5,
+                        marginTop: 6,
                       }}
                     >
                       <Text style={{ color: theme.warning, fontWeight: "600", textAlign: "center" }}>
                         ⚠️ Transfer the exact amount above!
                       </Text>
                     </View>
-                  </View>
-
-                  {/* Confirmation Button */}
+                     {/* Confirmation Button */}
                   <Button
                     text="I've Sent the Money"
                     icon="check-circle"
@@ -387,6 +382,9 @@ Please confirm this payment.`
                     fullWidth={true}
                     variant="success"
                   />
+                  </View>
+
+                 
                 </>
               ) : (
                 <>

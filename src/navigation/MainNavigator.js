@@ -12,7 +12,6 @@ import ElectricityScreen from '../screens/ElectricityScreen';
 import TransactionHistory from '../screens/TransactionHistory';
 // import { WalletProvider } from '../components/Wallet';
 import { NavigationContainer } from '@react-navigation/native';
-import ActivationScreen from '../screens/ActivationScreen';
 const Stack = createStackNavigator();
 
 const MainNavigator = () => {
@@ -22,7 +21,6 @@ const MainNavigator = () => {
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName='LoginScreen'>
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
-        <Stack.Screen name="ActivationScreen" component={ActivationScreen} />
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="ProfileSettings" component={ProfileSettingsScreen} />

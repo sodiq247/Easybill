@@ -135,60 +135,60 @@ const HomeScreen = () => {
   ];
 
   // Professional promotions data
-const promotions = [
-  {
-    id: 1,
-    title: "Get 5% Cashback",
-    subtitle: "On all data purchases",
-    description:
-      "Purchase any data bundle and get 5% cashback instantly credited to your wallet",
-    bgColor: "bg-[#45B7D1]", // Blue shade
-    icon: "wifi",
-    iconColor: "#45B7D1",
-    badge: "LIMITED TIME",
-    badgeColor: "bg-yellow-400",
-    offer: "5% BACK",
-  },
-  {
-    id: 2,
-    title: "Free Airtime Bonus",
-    subtitle: "Buy ₦1000, Get ₦100 Free",
-    description:
-      "Purchase airtime worth ₦1000 or more and get ₦100 bonus airtime instantly",
-    bgColor: "bg-[#34A853]", // Green shade replacing gradient
-    icon: "phone",
-    iconColor: "#34A853",
-    badge: "HOT DEAL",
-    badgeColor: "bg-red-500",
-    offer: "₦100 FREE",
-  },
-  {
-    id: 3,
-    title: "Electricity Bill Discount",
-    subtitle: "Save 3% on all payments",
-    description:
-      "Pay your electricity bills through vaaPay and save 3% on every transaction",
-    bgColor: "bg-[#A55EEA]", // Purple shade replacing gradient
-    icon: "flash-on",
-    iconColor: "bg-[#A55EEA]",
-    badge: "ONGOING",
-    badgeColor: "bg-theme-primary",
-    offer: "3% OFF",
-  },
-  {
-    id: 4,
-    title: "TV Subscription Rewards",
-    subtitle: "Earn points on every payment",
-    description:
-      "Pay for DSTV, GOTV subscriptions and earn reward points for future discounts",
-    bgColor: "bg-[#4B0082]", // Indigo shade replacing gradient
-    icon: "tv",
-    iconColor: "bg-[#4B0082]",
-    badge: "NEW",
-    badgeColor: "bg-green-500",
-    offer: "EARN POINTS",
-  },
-];
+  const promotions = [
+    {
+      id: 1,
+      title: "Get 5% Cashback",
+      subtitle: "On all data purchases",
+      description:
+        "Purchase any data bundle and get 5% cashback instantly credited to your wallet",
+      bgColor: "bg-[#45B7D1]", // Blue shade
+      icon: "wifi",
+      iconColor: "#45B7D1",
+      badge: "LIMITED TIME",
+      badgeColor: "bg-yellow-400",
+      offer: "5% BACK",
+    },
+    {
+      id: 2,
+      title: "Free Airtime Bonus",
+      subtitle: "Buy ₦1000, Get ₦100 Free",
+      description:
+        "Purchase airtime worth ₦1000 or more and get ₦100 bonus airtime instantly",
+      bgColor: "bg-[#34A853]", // Green shade replacing gradient
+      icon: "phone",
+      iconColor: "#34A853",
+      badge: "HOT DEAL",
+      badgeColor: "bg-red-500",
+      offer: "₦100 FREE",
+    },
+    {
+      id: 3,
+      title: "Electricity Bill Discount",
+      subtitle: "Save 3% on all payments",
+      description:
+        "Pay your electricity bills through vaaPay and save 3% on every transaction",
+      bgColor: "bg-[#A55EEA]", // Purple shade replacing gradient
+      icon: "flash-on",
+      iconColor: "bg-[#A55EEA]",
+      badge: "ONGOING",
+      badgeColor: "bg-theme-primary",
+      offer: "3% OFF",
+    },
+    {
+      id: 4,
+      title: "TV Subscription Rewards",
+      subtitle: "Earn points on every payment",
+      description:
+        "Pay for DSTV, GOTV subscriptions and earn reward points for future discounts",
+      bgColor: "bg-[#4B0082]", // Indigo shade replacing gradient
+      icon: "tv",
+      iconColor: "bg-[#4B0082]",
+      badge: "NEW",
+      badgeColor: "bg-green-500",
+      offer: "EARN POINTS",
+    },
+  ];
 
   const getTransactionIcon = (description) => {
     if (description?.toLowerCase().includes("data")) return "wifi";
@@ -292,18 +292,18 @@ const promotions = [
             </Text>
             <Text className="text-base text-white opacity-90 mb-2">
               {/* {promotion.subtitle} */}
-               Coming soon...
+              Coming soon...
             </Text>
             <Text className="hidden text-sm text-white opacity-80 leading-5 mb-3">
               {/* {promotion.description} */}
-               Coming soon...
+              Coming soon...
             </Text>
 
             {/* Offer Highlight */}
             <View className="hidden bg-white bg-opacity-20 rounded-lg px-3 py-2 self-start">
               <Text className="text-white font-bold text-sm">
                 {/* {promotion.offer} */}
-                 Coming soon...
+                Coming soon...
               </Text>
             </View>
           </View>
@@ -316,7 +316,9 @@ const promotions = [
 
         {/* Action Button */}
         <TouchableOpacity className=" bg-white bg-opacity-20 rounded-xl py-2 px-4 mt-4 self-start">
-          <Text className={`text-${promotion.bgColor}  font-semibold text-sm`}>Learn More</Text>
+          <Text className={`text-${promotion.bgColor}  font-semibold text-sm`}>
+            Learn More
+          </Text>
         </TouchableOpacity>
 
         {/* Decorative Elements */}
@@ -508,8 +510,14 @@ const promotions = [
               </TouchableOpacity>
             </View> */}
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2 ">
-              {promotions.map((promotion, index) => renderPromotionCard(promotion, index))}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              className="mb-2 "
+            >
+              {promotions.map((promotion, index) =>
+                renderPromotionCard(promotion, index)
+              )}
             </ScrollView>
           </View>
 
@@ -565,9 +573,10 @@ const promotions = [
           onRequestClose={() => setShowFundWalletModal(false)}
         >
           <View className="flex-1 bg-black/50 justify-center items-center">
-            <View className="bg-white rounded-3xl p-6 w-4/5 max-w-sm">
+            <View className="bg-white rounded-3xl p-6 w-4/5 max-w-sm gap-4">
               <FundWalletTypes />
               <Button
+                style={{ marginTop: 20 }}
                 text="Cancel"
                 variant="outline"
                 onPress={() => setShowFundWalletModal(false)}
