@@ -272,7 +272,7 @@ const HomeScreen = () => {
   const renderPromotionCard = (promotion, index) => (
     <TouchableOpacity key={promotion.id} className="mr-4 w-72">
       <View
-        className={`${promotion.bgColor} rounded-2xl p-5 relative overflow-hidden`}
+        className={`${promotion.bgColor} rounded-2xl p-3 relative overflow-hidden`}
       >
         {/* Badge */}
         <View
@@ -526,9 +526,9 @@ const HomeScreen = () => {
 
           {/* Transactions Section - Only this part is scrollable */}
           <View className="flex-1">
-            <View className="flex-row items-center justify-between mb-2">
+            <View className="flex-row items-center justify-between mb-1">
               <Text className="text-lg font-bold text-theme-secondary">
-                Transactions
+                Recent Transactions
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate("History")}>
                 <Text className="text-theme-primary font-medium">See all</Text>
@@ -563,7 +563,7 @@ const HomeScreen = () => {
                 </View>
               )}
               {/* Add padding at the bottom to ensure content is visible above footer */}
-              <View className="h-10" />
+              <View className="h-8" />
             </ScrollView>
           </View>
         </View>

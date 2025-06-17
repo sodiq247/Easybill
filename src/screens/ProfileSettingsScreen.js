@@ -454,7 +454,7 @@ const ProfileSettingsScreen = () => {
           </View>
         </ScrollView>
         <Header />
-        <Footer />
+        {/* <Footer /> */}
       </SafeAreaView>
     </View>
   );

@@ -494,7 +494,7 @@ const ElectricityScreen = () => {
         reloadData={onRefresh}
         logout={handleLogout}
       />
-      <Footer />
+      {/* <Footer /> */}
     </SafeAreaView>
   );
 };

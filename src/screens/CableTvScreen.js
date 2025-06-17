@@ -496,7 +496,7 @@ const CableTvScreen = () => {
         reloadData={onRefresh}
         logout={handleLogout}
       />
-      <Footer />
+      {/* <Footer /> */}
     </SafeAreaView>
   );
 };

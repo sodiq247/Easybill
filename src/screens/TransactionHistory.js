@@ -342,33 +342,42 @@ const TransactionHistory = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.background} />
 
-      {/* Balance Display */}
-      <View
-        style={{
-          paddingHorizontal: 16,
-          paddingVertical: 16,
-          backgroundColor: theme.white,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.border,
-        }}
-      >
-        <Text style={{ textAlign: "center", fontSize: 18, fontWeight: "600", color: theme.secondary }}>
-          Hi, {wallet.name} {wallet.lastName}
+     {/* Header */}
+        <Text
+          style={{
+            fontSize: 24,
+            fontWeight: "700",
+            textAlign: "center",
+            color: theme.secondary,
+            marginBottom: 16,
+          }}
+        >
+          Transaction History
         </Text>
-        <Text style={{ textAlign: "center", fontSize: 24, fontWeight: "700", color: theme.secondary, marginTop: 4 }}>
-          Balance: ₦{wallet.balance.toLocaleString()}
-        </Text>
-      </View>
+
+        {/* Wallet Info */}
+        <View
+          style={{
+            backgroundColor: theme.primaryFaded,
+            padding: 16,
+            borderRadius: 12,
+            marginBottom: 24,
+          }}
+        >
+          <Text style={{ fontSize: 18, textAlign: "center", color: theme.textLight, marginBottom: 4 }}>
+            Balance: ₦{wallet.balance.toLocaleString()}
+          </Text>
+        </View>
 
       {/* Filter Options */}
-      <View style={{ paddingHorizontal: 16, paddingBottom: 8, marginTop: 12, gap: 12 }}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+      <View style={{ paddingHorizontal: 16, paddingBottom: 8, marginTop: 2, gap: 8 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
           {/* Search Bar */}
-          <View style={{ flex: 0.6 }}>
+          <View style={{ flex: 2, width: "80%", marginRight: 12, marginTop: 12, paddingTop: 12  }}>
             <Input
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder="Search transactions..."
+              placeholder="Search ..."
               icon="search"
               iconPosition="left"
             />
@@ -501,7 +510,7 @@ const TransactionHistory = () => {
 
       {/* Header */}
       <Header toggleSidebar={() => setSidebarVisible(!sidebarVisible)} reloadData={onRefresh} logout={handleLogout} />
-      <Footer />
+      {/* <Footer /> */}
     </SafeAreaView>
   )
 }

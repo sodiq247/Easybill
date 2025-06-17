@@ -699,7 +699,7 @@ Date: ${new Date().toLocaleString()}
         reloadData={onRefresh}
         logout={handleLogout}
       />
-      <Footer />
+      {/* <Footer /> */}
     </SafeAreaView>
   );
 };

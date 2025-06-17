@@ -129,10 +129,10 @@ const LoginScreen = () => {
               {/* App Header with Logo */}
               <View className="items-center justify-center mb-5">
                 <View className="flex-row items-center">
-                  <View className="w-10 h-10 py-1 rounded-[10px] bg-theme-primary items-center justify-center mr-0.5">
+                  <View className="w-12 h-12 pt-1 rounded-[10px] bg-theme-primary items-center justify-center mr-0.5">
                     <Text className="text-white text-5xl font-bold">V</Text>
                   </View>
-                  <Text className="text-xl font-bold text-theme-secondary mt-2">
+                  <Text className="text-2xl font-bold text-theme-secondary mt-3">
                     aaPay
                   </Text>
                 </View>

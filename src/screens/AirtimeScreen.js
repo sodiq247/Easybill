@@ -239,7 +239,7 @@ const AirtimeScreen = () => {
       </ScrollView>
 
       <Header toggleSidebar={() => setSidebarVisible(!sidebarVisible)} reloadData={onRefresh} logout={handleLogout} />
-      <Footer />
+      {/* <Footer /> */}
     </SafeAreaView>
   )
 }
