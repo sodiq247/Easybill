@@ -21,3 +21,12 @@ npx expo start
 
 ## To Build
 eas build --platform android
+
+## How to solve this error
+Android Bundling failed 214ms index.js (1 module)
+error: index.js: C:\Users\Interra\VaaPay\index.js: Use process(css).then(cb) to work with async plugins
+
+## solution the the error
+npm uninstall tailwindcss
+npm install tailwindcss@3.3.2 --save-exact
+

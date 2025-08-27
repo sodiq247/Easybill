@@ -17,8 +17,6 @@ import Footer from "../components/Footer";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { theme } from "../utils/theme";
-// Remove this import
-// import AppBackground from "../components/AppBackground"
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -93,12 +91,6 @@ const LoginScreen = () => {
   };
 
   return (
-    // Remove this import
-    // import AppBackground from "../components/AppBackground"
-
-    // In the return statement, replace:
-    // <AppBackground>
-    //   <View style={{ flex: 1, backgroundColor: "transparent" }}>
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <View style={{ flex: 1 }}>
         <KeyboardAvoidingView
@@ -228,9 +220,6 @@ const LoginScreen = () => {
         <Footer />
       </View>
     </View>
-    // And at the end, replace:
-    //   </View>
-    // </AppBackground>
   );
 };
 

@@ -20,8 +20,6 @@ import Header from "../components/Header";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import { theme } from "../utils/theme";
-// Remove this import
-// import AppBackground from "../components/AppBackground"
 
 const ProfileSettingsScreen = () => {
   const [userProfile, setUserProfile] = useState({
@@ -194,9 +192,6 @@ const ProfileSettingsScreen = () => {
 
   if (loading) {
     return (
-      // In the return statement, replace:
-      // <AppBackground>
-      //   <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, backgroundColor: theme.background }}>
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
           <StatusBar
@@ -217,9 +212,6 @@ const ProfileSettingsScreen = () => {
   }
 
   return (
-    // In the return statement, replace:
-    // <AppBackground>
-    //   <SafeAreaView style={{ flex: 1 }}>
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar barStyle="dark-content" backgroundColor={theme.background} />

@@ -8,8 +8,6 @@ import accountServices from "../services/auth.services"
 import Button from "../components/ui/Button"
 import Input from "../components/ui/Input"
 import { theme } from "../utils/theme"
-// Remove this import
-// import AppBackground from "../components/AppBackground"
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState("")

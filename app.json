@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "VaaPay",
-    "slug": "VaaPay",
+    "name": "vaapay",
+    "slug": "vaapay",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sodiq247.VaaPay",
+      "package": "com.sodiq247.vaapay",
       "permissions": [
         "INTERNET"
       ]
@@ -30,7 +30,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "02aeac00-5b6c-4d99-b203-7cd308e221b1"
+        "projectId": "ce195270-c72e-4ed0-8650-db0e49d00cf8"
       }
     },
     "owner": "sodiq247"
