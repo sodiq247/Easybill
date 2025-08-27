@@ -72,6 +72,12 @@ const ElectricityScreen = () => {
       Alert.alert("Error", "Please fill all fields.");
       return;
     }
+
+    if (wallet.balance < amount) {
+      Alert.alert("Error", "Insufficient balance.");
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const data = {
       disco_name: selectedDisco,
@@ -105,11 +111,7 @@ const ElectricityScreen = () => {
   const handlePurchase = async () => {
     setLoading(true);
 
-    if (wallet.balance < amount) {
-      Alert.alert("Error", "Insufficient balance.");
-      setLoading(false);
-      return;
-    }
+    
 
     try {
       const response = await vasServices.electric(transactionDetails);

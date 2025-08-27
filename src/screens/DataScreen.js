@@ -253,7 +253,7 @@ Date: ${new Date().toLocaleString()}
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+    <SafeAreaView className="py-8" style={{ flex: 1, backgroundColor: theme.background }}>
       <Sidebar
         isVisible={sidebarVisible}
         toggleSidebar={() => setSidebarVisible(false)}

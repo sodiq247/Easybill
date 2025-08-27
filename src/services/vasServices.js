@@ -1,8 +1,8 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// let baseUrl = "https://sdc-backend-t3j9.onrender.com/api/v18/vas/";
-let baseUrl = "http://localhost:5030/api/v18/vas/";
+let baseUrl = "https://sdc-backend-t3j9.onrender.com/api/v18/vas/";
+// let baseUrl = "http://localhost:5030/api/v18/vas/";
 
 
 // const getToken = async () => {

@@ -5,8 +5,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 
 // 🌐 Base URL for API
-// let baseUrl = "https://sdc-backend-t3j9.onrender.com/api/v1/";
-let baseUrl = "http://localhost:5030/api/v1/";
+let baseUrl = "https://sdc-backend-t3j9.onrender.com/api/v1/";
+// let baseUrl = "http://localhost:5030/api/v1/";
 
 // 🔐 Get token from AsyncStorage
 const getToken = async () => {

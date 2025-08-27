@@ -69,7 +69,7 @@ const LoginScreen = () => {
           };
           await saveWalletDetails(walletDetails);
 
-          Alert.alert("Success", "Login successful!");
+          // Alert.alert("Success", "Login successful!");
           setTimeout(() => {
             navigation.reset({
               index: 0,
@@ -119,7 +119,25 @@ const LoginScreen = () => {
                 Login
               </Text> */}
               {/* App Header with Logo */}
-              <View className="items-center justify-center mb-5">
+              {/* Logo Section */}
+            <View className="flex-row items-center justify-center mb-10">
+              {/* <View className="w-14 h-14 rounded-xl bg-theme-primary items-center justify-center shadow-md shadow-theme-primary/40 mb-4"> */}
+                <Text className="text-theme-primary text-6xl font-bold">V</Text>
+              {/* </View> */}
+              <Text className="text-3xl font-bold text-theme-secondary">aaPay</Text>
+            </View>
+
+            {/* Welcome Section */}
+            <View className="mb-8">
+              {/* <Text className="text-xl font-semibold text-theme-secondary text-center mb-2">
+                Welcome Back!
+              </Text> */}
+              <Text className="text-theme-textLight text-center text-base">
+                  Welcome back! Kindly login to have access to your account
+              </Text>
+            </View>
+
+              {/* <View className="items-center justify-center mb-5">
                 <View className="flex-row items-center">
                   <View className="w-12 h-12 pt-1 rounded-[10px] bg-theme-primary items-center justify-center mr-0.5">
                     <Text className="text-white text-5xl font-bold">V</Text>
@@ -128,9 +146,9 @@ const LoginScreen = () => {
                     aaPay
                   </Text>
                 </View>
-              </View>
+              </View> */}
               {/* Subtitle */}
-              <Text
+              {/* <Text
                 style={{
                   fontSize: 16,
                   color: theme.textLight,
@@ -139,7 +157,7 @@ const LoginScreen = () => {
                 }}
               >
                 Welcome back! Please enter your details to continue.
-              </Text>
+              </Text> */}
 
               {/* Email Input */}
               <Input
@@ -217,7 +235,7 @@ const LoginScreen = () => {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-        <Footer />
+        {/* <Footer /> */}
       </View>
     </View>
   );

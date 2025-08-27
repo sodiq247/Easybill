@@ -112,6 +112,12 @@ const CableTvScreen = () => {
       return;
     }
 
+    if (wallet.balance < Number(amountToPay)) {
+      Alert.alert("Error", "Insufficient balance.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const data = {
@@ -188,7 +194,7 @@ const CableTvScreen = () => {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+    <SafeAreaView className="py-8" style={{ flex: 1, backgroundColor: theme.background }}>
       <Sidebar
         isVisible={sidebarVisible}
         toggleSidebar={() => setSidebarVisible(false)}

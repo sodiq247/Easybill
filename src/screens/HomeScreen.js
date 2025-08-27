@@ -329,7 +329,7 @@ const HomeScreen = () => {
   );
 
   return (
-    <View className="flex-1 bg-theme-background">
+    <View className="flex-1 py-8 bg-theme-background">
       <SafeAreaView className="flex-1">
         <StatusBar barStyle="dark-content" backgroundColor="#F8F8FF" />
         {/* App Header with Logo */}

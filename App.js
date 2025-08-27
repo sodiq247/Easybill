@@ -25,7 +25,7 @@ const App = () => {
 
   return (
     <>
-      <MainNavigator />
+      <MainNavigator className="py-8" />
       
       {/* WhatsApp Icon */}
       <View style={{ position: 'absolute', bottom: 20, right: 20, display: 'none'  }}>

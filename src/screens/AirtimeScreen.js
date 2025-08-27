@@ -72,7 +72,9 @@ const AirtimeScreen = () => {
     }
 
     if (wallet.balance < Number(amount)) {
-      Alert.alert("Error", "Insufficient balance.")
+      Alert.alert("Error", "Insufficient balance.");
+      setLoading(false);
+      return;
     } else {
       try {
         const response = await vasServices.airTime(data)
@@ -114,7 +116,7 @@ const AirtimeScreen = () => {
   ]
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+    <SafeAreaView className="py-8" style={{ flex: 1, backgroundColor: theme.background }}>
       <Sidebar isVisible={sidebarVisible} toggleSidebar={() => setSidebarVisible(false)} logout={handleLogout} />
 
       <ScrollView
@@ -198,7 +200,18 @@ const AirtimeScreen = () => {
         {loading ? (
           <ActivityIndicator size="large" color={theme.primary} style={{ marginTop: 20 }} />
         ) : (
-          <Button text="Buy Now" onPress={() => setShowModal(true)} fullWidth={true} />
+          // <Button text="Buy Now" onPress={() => setShowModal(true)} fullWidth={true} />
+           <Button
+            text="Buy Now"
+            onPress={() => {
+              if (Number(amount) > 0 && wallet.balance < Number(amount)) {
+                Alert.alert("Error", "Insufficient balance.");
+              } else {
+                setShowModal(true);
+              }
+            }}
+            fullWidth={true}
+          />
         )}
 
         {/* Confirmation Modal */}
